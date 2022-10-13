@@ -2,17 +2,34 @@ package model;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 /*
  * Represents the polynomial object and ways to operate on it
  */
 public class Polynomial {
-    private List<Term> orderedTerms;
+    private final List<Term> orderedTerms;
 
     // Constructs a polynomial
     // EFFECTS: Constructs a polynomial with an empty linked list named `orderedTerms`
     public Polynomial() {
         orderedTerms = new LinkedList<>();
+    }
+
+    // Constructs a term from string input
+    // REQUIRES: string input that's consistent with toString method result
+    // EFFECTS: Constructs a term equal to the constant 0
+    public Polynomial(String polynomialStr) {
+        orderedTerms = new LinkedList<>();
+        if (!Objects.equals(polynomialStr, "")) {
+            if (polynomialStr.contains(" + ")) {
+                String[] termStrs = polynomialStr.split(" \\+ ");
+                for (String termStr : termStrs) {
+                    Term term = new Term(termStr);
+                    addTerm(term);
+                }
+            }
+        }
     }
 
     // Adds a term
@@ -71,6 +88,14 @@ public class Polynomial {
         }
 
         return polynomial;
+    }
+
+    public double getYIntercept() {
+        return evaluateAtPoint(0);
+    }
+
+    public double[] getXIntercepts() {
+        return null;
     }
 
     // Overriding toString() method of String class
