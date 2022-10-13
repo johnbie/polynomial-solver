@@ -16,10 +16,14 @@ class TermTest {
         assertTrue(zero2.isZero());
 
         Term needsSimplify1 = new Term("2/4x");
-        assertEquals("1/2x", needsSimplify1.toString());
+        assertEquals(1, needsSimplify1.getNumerator());
+        assertEquals(2, needsSimplify1.getDenominator());
+        assertEquals(1, needsSimplify1.getDegree());
 
         Term needsSimplify2 = new Term("1/-4x");
-        assertEquals("-1/4x", needsSimplify2.toString());
+        assertEquals(-1, needsSimplify2.getNumerator());
+        assertEquals(4, needsSimplify2.getDenominator());
+        assertEquals(1, needsSimplify2.getDegree());
 
         Term x = new Term("x");
         assertEquals(1, x.getNumerator());
