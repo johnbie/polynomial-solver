@@ -18,7 +18,7 @@ public class PolynomialTerminalApp {
     // MODIFIES: this
     // EFFECTS: initializes variables
     private void init() {
-        polynomial = new Polynomial();
+        polynomial = new Polynomial("x^2 + 7/15x + -4/15");
         input = new Scanner(System.in);
         input.useDelimiter("\n");
     }
@@ -29,9 +29,12 @@ public class PolynomialTerminalApp {
     private void run() {
         boolean keepGoing = true;
         String command;
+        System.out.println("\nWelcome to the Rational Polynomial Information App!");
+        System.out.println("Fill in a polynomial made up of rational coefficients and natural degrees ");
+        System.out.println("to find the x/y intercept, critical points, inflection points, and more!");
+        System.out.println("For more information, type 'h'");
 
         while (keepGoing) {
-            displayOptions();
             command = input.next();
             command = command.toLowerCase();
 
@@ -115,10 +118,10 @@ public class PolynomialTerminalApp {
         while (true) {
             try {
                 double x = input.nextDouble();
-                System.out.println("\nThe value of the function at " + x + " is " + polynomial.evaluateAtPoint(x));
+                System.out.println("The value of the function at " + x + " is " + polynomial.evaluateAtPoint(x));
                 return;
             } catch (Exception e) {
-                System.out.println("\nInvalid input! Try again: ");
+                System.out.println("Invalid input! Try again: ");
             }
         }
     }
@@ -127,10 +130,10 @@ public class PolynomialTerminalApp {
     // EFFECTS: gets summary of the polynomial
     private void getSummary() {
         System.out.println("\nSummary: ");
-        System.out.println("\tx-intercepts: N/A");
-        System.out.println("\ty-intercept: N/A");
-        System.out.println("\tcritical points: N/A");
-        System.out.println("\tinflection points: N/A");
+        System.out.println("\tx-intercepts: " + polynomial.getXIntercepts());
+        System.out.println("\ty-intercept: " + polynomial.getYIntercept());
+        System.out.println("\tcritical points: " + polynomial.getCriticalPoints());
+        System.out.println("\tinflection points: " + polynomial.getInflectionPoints());
     }
 
     // prompts user to fill in a valid polynomial and return it
@@ -140,9 +143,11 @@ public class PolynomialTerminalApp {
 
         while (true) {
             try {
-                return new Polynomial(input.next());
+                Polynomial polynomial = new Polynomial(input.next());
+                System.out.println("Created new polynomial " + polynomial + " from input!");
+                return polynomial;
             } catch (Exception e) {
-                System.out.println("\nInvalid input! Try again: ");
+                System.out.println("Invalid input! Try again: ");
             }
         }
     }
@@ -154,9 +159,11 @@ public class PolynomialTerminalApp {
 
         while (true) {
             try {
-                return new Term(input.next());
+                Term term = new Term(input.next());
+                System.out.println("Added new term " + term + " from input!");
+                return term;
             } catch (Exception e) {
-                System.out.println("\nInvalid input! Try again: ");
+                System.out.println("Invalid input! Try again: ");
             }
         }
     }

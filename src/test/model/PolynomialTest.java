@@ -8,6 +8,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class PolynomialTest {
     @Test
+    public void testPolynomialFromString() {
+        Polynomial zero = new Polynomial("0");
+        assertEquals("0", zero.toString());
+
+        Polynomial polynomial = new Polynomial("x^2 + 7/15x + -4/15");
+        assertEquals("x^2 + 7/15x + -4/15", polynomial.toString());
+    }
+    @Test
     public void testAddTerm() {
         Polynomial polynomial = new Polynomial();
         polynomial.addTerm(new Term(1,1,1));
@@ -66,5 +74,33 @@ class PolynomialTest {
         polynomial.addTerm(new Term(1, 1, 10));
         Polynomial derivative = polynomial.getDerivative();
         assertEquals("10x^9 + 1", derivative.toString());
+    }
+
+    @Test
+    public void testGetXIntercepts() {
+        Polynomial zero = new Polynomial();
+        assertEquals("All real numbers", zero.getXIntercepts());
+        Polynomial polynomial = new Polynomial("x^3 + 6x^2 + 11x + 6");
+        assertEquals("[-1, -2, -3]", polynomial.getXIntercepts());
+    }
+
+    @Test
+    public void testGetYIntercept() {
+        Polynomial zero = new Polynomial();
+        assertEquals("0", zero.getYIntercept());
+        Polynomial polynomial = new Polynomial("10");
+        assertEquals("10", polynomial.getYIntercept());
+    }
+
+    @Test
+    public void testGetCriticalPoints() {
+        Polynomial polynomial = new Polynomial("x^3 + 2");
+        assertEquals("[0]", polynomial.getCriticalPoints());
+    }
+
+    @Test
+    public void testGetInflectionPoints() {
+        Polynomial polynomial = new Polynomial("x^3 + x + 2");
+        assertEquals("[0]", polynomial.getInflectionPoints());
     }
 }

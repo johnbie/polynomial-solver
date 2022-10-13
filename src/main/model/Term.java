@@ -1,7 +1,5 @@
 package model;
 
-import java.util.Locale;
-
 /*
  * Represents the term of a polynomial object
  */
@@ -63,15 +61,27 @@ public class Term {
     }
 
     public int getNumerator() {
-        return numerator;
+        return this.numerator;
+    }
+
+    public void setNumerator(int numerator) {
+        this.numerator = numerator;
     }
 
     public int getDenominator() {
-        return denominator;
+        return this.denominator;
+    }
+
+    public void setDenominator(int denominator) {
+        this.denominator = denominator;
     }
 
     public int getDegree() {
-        return degree;
+        return this.degree;
+    }
+
+    public void setDegree(int degree) {
+        this.degree = degree;
     }
 
     // Returns whether the term is a zero (i.e. 0, 0x, 0x^2, etc)
@@ -116,6 +126,12 @@ public class Term {
         }
     }
 
+    // creates a copy of the term
+    // EFFECTS: Returns the term copy
+    public Term createCopy() {
+        return new Term(this.numerator, this.denominator, this.degree);
+    }
+
     // Overriding toString() method of String class
     // EFFECTS: Returns the string of the coefficient
     @Override
@@ -151,25 +167,10 @@ public class Term {
             this.numerator *= -1;
         }
 
-        int gcd = getLowestCommonDivisor(Math.abs(numerator), denominator);
+        int gcd = NMathUtil.getGreatestCommonDivisor(Math.abs(numerator), denominator);
         if (gcd > 1) {
             this.numerator /= gcd;
             this.denominator /= gcd;
         }
-    }
-
-    // Returns the lowest common divisor of two numbers.
-    // Code is based on a subtraction-based implementation of the Euclid's Algorithm (https://en.wikipedia.org/wiki/Euclidean_algorithm)
-    // REQUIRES: two positive integers (a >= 0; b >= 0)
-    // EFFECTS: Simplifies the coefficient
-    private int getLowestCommonDivisor(int a, int b) {
-        while (a != b) {
-            if (a > b) {
-                a -= b;
-            } else {
-                b -= a;
-            }
-        }
-        return a;
     }
 }

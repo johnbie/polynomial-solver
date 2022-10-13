@@ -46,7 +46,13 @@ Here are some list of restrictions:
 
 List of User Stories:
  - As a high school student, I want to see where all the x/y intercepts are, and in symbolic form when possible.
- - As a high school student, I just want to know what the zeroes are for x.
- - As a college student, I want to see where all the function increases, decreases, and is concave up or down.
+	- NOTE: the implementation doesn't yet support non-rational intercepts
  - As a college student, I want to see all the critical and inflection points.
+ - As a college student, I want to just quickly get the derivative of the function.
+ - As a user, I want to just check the values of the function at specific point `f(a)`.
+
+Future Stories:
  - As a math tutor, I want to be able to quickly generate and plot the polynomials so that I can teach my students math concepts visually.
+	- By evaluating the point value of the function and derivative, it's possible to plot the curve with Bezier curve
+ - As a tester, I want to just store and maintaint a list of polynomials I would test with by copy-pasting.
+ - As a college student, I want to see where all the function increases, decreases, and is concave up or down. (MAYBE)

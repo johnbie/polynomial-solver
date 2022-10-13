@@ -1,5 +1,6 @@
 package model;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -8,7 +9,8 @@ import java.util.Objects;
  * Represents the polynomial object and ways to operate on it
  */
 public class Polynomial {
-    private final List<Term> orderedTerms;
+    private List<Term> orderedTerms;
+    private static final double EPSILON = 0.0000000001;
 
     // Constructs a polynomial
     // EFFECTS: Constructs a polynomial with an empty linked list named `orderedTerms`
@@ -23,11 +25,14 @@ public class Polynomial {
         orderedTerms = new LinkedList<>();
         if (!Objects.equals(polynomialStr, "")) {
             if (polynomialStr.contains(" + ")) {
-                String[] termStrs = polynomialStr.split(" \\+ ");
-                for (String termStr : termStrs) {
+                String[] termStrings = polynomialStr.split(" \\+ ");
+                for (String termStr : termStrings) {
                     Term term = new Term(termStr);
                     addTerm(term);
                 }
+            } else {
+                Term term = new Term(polynomialStr);
+                addTerm(term);
             }
         }
     }
@@ -90,12 +95,75 @@ public class Polynomial {
         return polynomial;
     }
 
-    public double getYIntercept() {
-        return evaluateAtPoint(0);
+    // Gets the y intercept of the function as a rational
+    // EFFECTS: gets the y intercept
+    public String getYIntercept() {
+        if (orderedTerms.size() == 0 || orderedTerms.get(0).getDegree() > 0) {
+            return "0";
+        } else {
+            return orderedTerms.get(0).toString(); // hacky but works
+        }
     }
 
-    public double[] getXIntercepts() {
-        return null;
+    // Gets the y intercepts of the function as a rational if possible
+    // EFFECTS: gets the x intercepts
+    public String getXIntercepts() {
+        return getXIntercepts(createCopy());
+    }
+
+    // Gets the y intercepts of the function in parameter as a rational if possible
+    // EFFECTS: gets the x intercepts
+    protected String getXIntercepts(Polynomial clone) {
+        int size = clone.orderedTerms.size();
+        if (size == 0) {
+            return "All real numbers";
+        }
+
+        List<String> coefficients = new ArrayList<>();
+
+        // purpose: factor out x=0 from polynomial until constant exists
+        // method: get the degree of last term; this is the number of x=0
+        int numberOfZeroIntercepts = clone.orderedTerms.get(0).getDegree();
+        if (numberOfZeroIntercepts > 0) {
+            coefficients.add("0");
+        }
+
+        // no more coefficients because the remaining "factor" is a constant
+        if (size == 1) {
+            return coefficients.toString();
+        }
+
+        normalize(clone, getLCM(), numberOfZeroIntercepts);
+        runRationalRootTheorem(coefficients, clone);
+
+        // TODO: check for non-rational coefficients as well
+
+        // return all the coefficients as a list
+        return coefficients.toString();
+    }
+
+    // Gets the critical points of the function as a rational if possible
+    // EFFECTS: gets the critical points
+    public String getCriticalPoints() {
+        return getXIntercepts(getDerivative());
+    }
+
+    // Gets the inflection points of the function as a rational if possible
+    // EFFECTS: gets the inflection points
+    public String getInflectionPoints() {
+        return getXIntercepts(getDerivative().getDerivative());
+    }
+
+    // creates a copy of the polynomial
+    // EFFECTS: Returns the polynomial copy
+    public Polynomial createCopy() {
+        Polynomial polynomial = new Polynomial();
+
+        for (Term term : orderedTerms) {
+            polynomial.orderedTerms.add(term.createCopy());
+        }
+
+        return polynomial;
     }
 
     // Overriding toString() method of String class
@@ -110,6 +178,62 @@ public class Polynomial {
             return string.toString();
         } else {
             return "0";
+        }
+    }
+
+    // Gets the lowest common multiple of the denominator
+    // EFFECTS: gets the lcm
+    private int getLCM() {
+        // get LCM of the denominators
+        int lcm = 1;
+        for (Term term : orderedTerms) {
+            int denominator = term.getDenominator();
+
+            if (denominator > 1) {
+                lcm = NMathUtil.getLowestCommonMultiple(lcm,denominator);
+            }
+        }
+
+        return lcm;
+    }
+
+    // Normalizes the polynomial such that the x's are factored out
+    // and the coefficients are integers (multiply all by lcm)
+    // MODIFIES: polynomial
+    // EFFECTS: Normalizes the polynomial
+    private void normalize(Polynomial polynomial, int lcm, int numberOfZeroIntercepts) {
+        // subtract the degree, increase numerator to integer-normalized value, and set denominator to 1
+        for (Term term : polynomial.orderedTerms) {
+            term.setDegree(term.getDegree() - numberOfZeroIntercepts);
+            term.setNumerator(term.getNumerator() * lcm / term.getDenominator());
+            term.setDenominator(1);
+        }
+    }
+
+    // check for and add rational coefficients based on the Rational Root Theorem
+    // also, factors out the rational components found in the polynomial (TODO)
+    // MODIFIES: coefficients, polynomial (TODO)
+    // EFFECTS: check for and add rational coefficients
+    private void runRationalRootTheorem(List<String> coefficients, Polynomial normalizedPoly) {
+        // get factors for leading coefficient and constant (both now an integer)
+        int lastPos = normalizedPoly.orderedTerms.size() - 1;
+        int leadingCoefficient = normalizedPoly.orderedTerms.get(lastPos).getNumerator();
+        List<Integer> leadingCoefficientFactors = NMathUtil.getFactors(Math.abs(leadingCoefficient));
+        int constant = normalizedPoly.orderedTerms.get(0).getNumerator();
+        List<Integer> constantFactors = NMathUtil.getFactors(Math.abs(constant));
+
+        // use epsilon and absolute value to account for rounding error
+        for (Integer constantFactor : constantFactors) {
+            for (Integer coefficientFactor : leadingCoefficientFactors) {
+                double pointValPositive = normalizedPoly.evaluateAtPoint((double)(constantFactor) / coefficientFactor);
+                if (Math.abs(pointValPositive) < EPSILON) {
+                    coefficients.add(constantFactor + (coefficientFactor == 1 ? "" : "/" + coefficientFactor));
+                }
+                double pointValNegative = normalizedPoly.evaluateAtPoint((double)(-constantFactor) / coefficientFactor);
+                if (Math.abs(pointValNegative) < EPSILON) {
+                    coefficients.add("-" + constantFactor + (coefficientFactor == 1 ? "" : "/" + coefficientFactor));
+                }
+            }
         }
     }
 }
