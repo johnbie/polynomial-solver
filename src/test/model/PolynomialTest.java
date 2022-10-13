@@ -9,8 +9,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class PolynomialTest {
     @Test
     public void testPolynomialFromString() {
-        Polynomial zero = new Polynomial("0");
-        assertEquals("0", zero.toString());
+        Polynomial zero1 = new Polynomial("0");
+        assertEquals("0", zero1.toString());
+
+        Polynomial zero2 = new Polynomial("");
+        assertEquals("0", zero2.toString());
 
         Polynomial polynomial = new Polynomial("x^2 + 7/15x + -4/15");
         assertEquals("x^2 + 7/15x + -4/15", polynomial.toString());
@@ -80,16 +83,24 @@ class PolynomialTest {
     public void testGetXIntercepts() {
         Polynomial zero = new Polynomial();
         assertEquals("All real numbers", zero.getXIntercepts());
-        Polynomial polynomial = new Polynomial("x^3 + 6x^2 + 11x + 6");
-        assertEquals("[-1, -2, -3]", polynomial.getXIntercepts());
+
+        Polynomial polynomial1 = new Polynomial("x^3 + 6x^2 + 11x + 6");
+        assertEquals("[-1, -2, -3]", polynomial1.getXIntercepts());
+
+        Polynomial polynomial2 = new Polynomial("x^2 + 7/15x + -4/15");
+        assertEquals("[1/3, -4/5]", polynomial2.getXIntercepts());
     }
 
     @Test
     public void testGetYIntercept() {
         Polynomial zero = new Polynomial();
         assertEquals("0", zero.getYIntercept());
-        Polynomial polynomial = new Polynomial("10");
-        assertEquals("10", polynomial.getYIntercept());
+
+        Polynomial polynomial1 = new Polynomial("10");
+        assertEquals("10", polynomial1.getYIntercept());
+
+        Polynomial polynomial2 = new Polynomial("x");
+        assertEquals("0", polynomial2.getYIntercept());
     }
 
     @Test

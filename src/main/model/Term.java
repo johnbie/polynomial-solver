@@ -48,6 +48,8 @@ public class Term {
         } else if (!termStr.equals("")) {
             this.numerator = Integer.parseInt(termStr);
         }
+
+        simplify();
     }
 
     // Constructs a term

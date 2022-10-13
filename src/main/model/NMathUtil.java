@@ -36,6 +36,10 @@ public class NMathUtil {
     // REQUIRES: two positive integers (a >= 0; b >= 0)
     // EFFECTS: Returns the greatest common divisor
     public static int getGreatestCommonDivisor(int a, int b) {
+        if (a == 0 || b == 0) {
+            return 1;
+        }
+
         while (a != b) {
             if (a > b) {
                 a -= b;

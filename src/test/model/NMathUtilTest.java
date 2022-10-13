@@ -6,7 +6,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class NMathUtilTest {
+final class NMathUtilTest {
     @Test
     public void testGetFactors() {
         assertEquals("[1]", NMathUtil.getFactors(1).toString());

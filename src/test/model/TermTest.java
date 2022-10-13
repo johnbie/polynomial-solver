@@ -9,8 +9,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class TermTest {
     @Test
     public void testTermFromString() {
-        Term zero = new Term("0");
-        assertTrue(zero.isZero());
+        Term zero1 = new Term("");
+        assertTrue(zero1.isZero());
+
+        Term zero2 = new Term("0");
+        assertTrue(zero2.isZero());
+
+        Term needsSimplify1 = new Term("2/4x");
+        assertEquals("1/2x", needsSimplify1.toString());
+
+        Term needsSimplify2 = new Term("1/-4x");
+        assertEquals("-1/4x", needsSimplify2.toString());
 
         Term x = new Term("x");
         assertEquals(1, x.getNumerator());
