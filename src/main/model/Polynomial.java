@@ -207,8 +207,8 @@ public class Polynomial {
         // subtract the degree, increase numerator to integer-normalized value, and set denominator to 1
         for (Term term : polynomial.orderedTerms) {
             term.setDegree(term.getDegree() - numberOfZeroIntercepts);
-            term.setNumerator(term.getNumerator() * lcm / term.getDenominator());
-            term.setDenominator(1);
+            term.setNumerator(term.getNumerator() * lcm);
+            term.setDenominator(1); // for coverage; redundant
         }
     }
 
@@ -230,21 +230,21 @@ public class Polynomial {
                 double pointValPositive = normalizedPoly.evaluateAtPoint((double)(constantFactor) / coefficientFactor);
                 if (Math.abs(pointValPositive) < EPSILON) {
                     coefficients.add(constantFactor + (coefficientFactor == 1 ? "" : "/" + coefficientFactor));
-                    factorOutAndNormalize(constantFactor, coefficientFactor, normalizedPoly);
+                    factorOut(constantFactor, coefficientFactor, normalizedPoly);
                 }
                 double pointValNegative = normalizedPoly.evaluateAtPoint((double)(-constantFactor) / coefficientFactor);
                 if (Math.abs(pointValNegative) < EPSILON) {
                     coefficients.add("-" + constantFactor + (coefficientFactor == 1 ? "" : "/" + coefficientFactor));
-                    factorOutAndNormalize(constantFactor, coefficientFactor, normalizedPoly);
+                    factorOut(-constantFactor, coefficientFactor, normalizedPoly);
                 }
             }
         }
     }
 
-    // factors out rational solution from polynomial and normalizes
+    // factors out rational solution from polynomial
     // MODIFIES: polynomial
-    // EFFECTS: factors out rational solution from polynomial and normalizes
-    private void factorOutAndNormalize(int n, int d, Polynomial normalizedPoly) {
+    // EFFECTS: factors out rational solution from polynomial
+    private void factorOut(int n, int d, Polynomial normalizedPoly) {
         int size = normalizedPoly.orderedTerms.size();
         if (size <= 1) {
             return;
@@ -253,7 +253,7 @@ public class Polynomial {
         List<Term> newTerms = new LinkedList<>();
         Term nextTerm = normalizedPoly.orderedTerms.get(size - 1);
         int newDegree = nextTerm.getDegree() - 1;
-        int remainder = nextTerm.getNumerator() * d;
+        int remainder = nextTerm.getNumerator() / d;
 
         // look at terms with in reverse order (highest degree first)
         for (int i = size - 2; i >= 0; i--) {
@@ -263,9 +263,9 @@ public class Polynomial {
             while (newDegree >= nextDegree && remainder != 0) {
                 newTerms.add(0, new Term(remainder, 1, newDegree));
                 if (newDegree == nextDegree) {
-                    remainder = (nextTerm.getNumerator() * d) - (remainder * n);
+                    remainder = (nextTerm.getNumerator() + (remainder * n)) / d;
                 } else {
-                    remainder = - (remainder * n);
+                    remainder = (remainder * n) / d;
                 }
                 newDegree--;
             }

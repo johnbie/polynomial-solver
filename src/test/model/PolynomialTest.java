@@ -86,6 +86,9 @@ class PolynomialTest {
 
         Polynomial polynomial2 = new Polynomial("x^2 + 7/15x + -4/15");
         assertEquals("[1/3, -4/5]", polynomial2.getXIntercepts());
+
+        Polynomial polynomial3 = new Polynomial("x^3 + -11/4x^2 + -27/2x + 45/4");
+        assertEquals("[-3, 3/4, 5]", polynomial3.getXIntercepts());
     }
 
     @Test
