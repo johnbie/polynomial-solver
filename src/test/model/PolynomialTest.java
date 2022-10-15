@@ -109,7 +109,15 @@ class PolynomialTest {
         assertEquals("[2+sqrt(8)/2, 2-sqrt(8)/2]", polynomial2.getXIntercepts());
 
         Polynomial polynomial3 = new Polynomial("x^3 + 1/2x^2 + -x");
-        assertEquals("[]", polynomial3.getXIntercepts()); // TODO: support all reals
+        assertEquals("[0, -1+sqrt(17)/4, -1-sqrt(17)/4]", polynomial3.getXIntercepts());
+    }
+
+    @Test
+    public void testGetXInterceptsSquareUnfoundRoots() {
+        Polynomial polynomial1 = new Polynomial("x^7 + -1");
+        assertEquals("[1]", polynomial1.getXIntercepts());
+
+        // TODO: test for all reals
     }
 
     @Test
