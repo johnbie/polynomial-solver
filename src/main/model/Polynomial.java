@@ -274,7 +274,6 @@ public class Polynomial {
 
     // check for and solves quadratic function
     // at this point, assume no rationals exists (and has such no linears)
-    // REQUIRES: a != 0
     // MODIFIES: coefficients
     // EFFECTS: check for and solves quadratic/linear function
     private static void checkSolveQuadratic(List<String> coefficients, Polynomial polynomial) {
@@ -289,6 +288,8 @@ public class Polynomial {
                 b = term.getNumerator();
             } else if (term.getDegree() == 2) {
                 a = term.getNumerator();
+            } else {
+                return; // NOT a quadratic
             }
         }
         checkSolveQuadratic(coefficients, a, b, c);
@@ -296,21 +297,22 @@ public class Polynomial {
 
     // check for and solves quadratic function
     // at this point, assume no rationals exists (and has such no linears)
-    // REQUIRES: a != 0
     // MODIFIES: coefficients
     // EFFECTS: check for and solves quadratic/linear functions
     private static void checkSolveQuadratic(List<String> coefficients, int a, int b, int c) {
         if (a != 0) {
-            if (a < 0) {
-                a *= -1;
-                // b double-negative = original
-            } else {
-                b *= -1; // b needs to be negative
+            int denominator = 2 * a;
+            int numerator = -b;
+
+            if (denominator < 0) {
+                numerator *= -1;
+                denominator *= -1;
             }
+
             int rootedPart = (b * b) - (4 * a * c);
             if (rootedPart > 0) {
-                coefficients.add(b + "+sqrt(" + rootedPart + ")/" + (2 * a));
-                coefficients.add(b + "-sqrt(" + rootedPart + ")/" + (2 * a));
+                coefficients.add(numerator + "+sqrt(" + rootedPart + ")/" + denominator);
+                coefficients.add(numerator + "-sqrt(" + rootedPart + ")/" + denominator);
             }
         }
     }
