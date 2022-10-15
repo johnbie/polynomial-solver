@@ -133,10 +133,12 @@ public class Polynomial {
             return coefficients.toString();
         }
 
-        normalize(clone, getLCM(), numberOfZeroIntercepts);
+        normalize(clone, getLCM(clone), numberOfZeroIntercepts);
         runRationalRootTheorem(coefficients, clone);
 
-        // TODO: check for non-rational coefficients as well
+        // check and solve for quadratic
+        checkSolveQuadratic(coefficients, clone);
+        // couldn't solve for arbitrary values
 
         // return all the coefficients as a list
         return coefficients.toString();
@@ -183,10 +185,10 @@ public class Polynomial {
 
     // Gets the lowest common multiple of the denominator
     // EFFECTS: gets the lcm
-    private int getLCM() {
+    private int getLCM(Polynomial polynomial) {
         // get LCM of the denominators
         int lcm = 1;
-        for (Term term : orderedTerms) {
+        for (Term term : polynomial.orderedTerms) {
             int denominator = term.getDenominator();
 
             if (denominator > 1) {
@@ -211,8 +213,8 @@ public class Polynomial {
     }
 
     // check for and add rational coefficients based on the Rational Root Theorem
-    // also, factors out the rational components found in the polynomial (TODO)
-    // MODIFIES: coefficients, polynomial (TODO)
+    // also, factors out the rational components found in the polynomial
+    // MODIFIES: coefficients, polynomial
     // EFFECTS: check for and add rational coefficients
     private void runRationalRootTheorem(List<String> coefficients, Polynomial normalizedPoly) {
         // get factors for leading coefficient and constant (both now an integer)
@@ -228,11 +230,86 @@ public class Polynomial {
                 double pointValPositive = normalizedPoly.evaluateAtPoint((double)(constantFactor) / coefficientFactor);
                 if (Math.abs(pointValPositive) < EPSILON) {
                     coefficients.add(constantFactor + (coefficientFactor == 1 ? "" : "/" + coefficientFactor));
+                    factorOutAndNormalize(constantFactor, coefficientFactor, normalizedPoly);
                 }
                 double pointValNegative = normalizedPoly.evaluateAtPoint((double)(-constantFactor) / coefficientFactor);
                 if (Math.abs(pointValNegative) < EPSILON) {
                     coefficients.add("-" + constantFactor + (coefficientFactor == 1 ? "" : "/" + coefficientFactor));
+                    factorOutAndNormalize(constantFactor, coefficientFactor, normalizedPoly);
                 }
+            }
+        }
+    }
+
+    // factors out rational solution from polynomial and normalizes
+    // MODIFIES: polynomial
+    // EFFECTS: factors out rational solution from polynomial and normalizes
+    private void factorOutAndNormalize(int n, int d, Polynomial normalizedPoly) {
+        int size = normalizedPoly.orderedTerms.size();
+        if (size <= 1) {
+            return;
+        }
+
+        List<Term> newTerms = new LinkedList<>();
+        Term nextTerm = normalizedPoly.orderedTerms.get(size - 1);
+        int newDegree = nextTerm.getDegree() - 1;
+        int remainder = nextTerm.getNumerator() * d;
+
+        // look at terms with in reverse order (highest degree first)
+        for (int i = size - 2; i >= 0; i--) {
+            nextTerm = normalizedPoly.orderedTerms.get(i);
+            int nextDegree = nextTerm.getDegree();
+
+            while (newDegree >= nextDegree && remainder != 0) {
+                newTerms.add(0, new Term(remainder, 1, newDegree));
+                if (newDegree == nextDegree) {
+                    remainder = (nextTerm.getNumerator() * d) - (remainder * n);
+                } else {
+                    remainder = - (remainder * n);
+                }
+                newDegree--;
+            }
+        }
+        normalizedPoly.orderedTerms = newTerms;
+    }
+
+    // check for and solves quadratic function
+    // at this point, assume no rationals exists (and has such no linears)
+    // MODIFIES: coefficients
+    // EFFECTS: check for and solves quadratic/linear function
+    private void checkSolveQuadratic(List<String> coefficients, Polynomial polynomial) {
+        int a = 0;
+        int b = 0;
+        int c = 0;
+
+        for (Term term : polynomial.orderedTerms) {
+            if (term.getDegree() == 0) {
+                c = term.getNumerator();
+            } else if (term.getDegree() == 1) {
+                b = term.getNumerator();
+            } else if (term.getDegree() == 2) {
+                a = term.getNumerator();
+            }
+        }
+        checkSolveQuadratic(coefficients, a, b, c);
+    }
+
+    // check for and solves quadratic function
+    // at this point, assume no rationals exists (and has such no linears)
+    // MODIFIES: coefficients
+    // EFFECTS: check for and solves quadratic/linear functions
+    private void checkSolveQuadratic(List<String> coefficients, int a, int b, int c) {
+        if (a != 0) {
+            if (a < 0) {
+                a *= -1;
+                // b double-negative = original
+            } else {
+                b *= -1; // b needs to be negative
+            }
+            int rootedPart = (b * b) - (4 * a * c);
+            if (rootedPart > 0) {
+                coefficients.add(b + "+sqrt(" + rootedPart + ")/" + (2 * a));
+                coefficients.add(b + "-sqrt(" + rootedPart + ")/" + (2 * a));
             }
         }
     }

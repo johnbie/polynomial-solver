@@ -68,6 +68,7 @@ public class Term {
 
     public void setNumerator(int numerator) {
         this.numerator = numerator;
+        simplify();
     }
 
     public int getDenominator() {
@@ -76,6 +77,7 @@ public class Term {
 
     public void setDenominator(int denominator) {
         this.denominator = denominator;
+        simplify();
     }
 
     public int getDegree() {
