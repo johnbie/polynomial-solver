@@ -185,7 +185,7 @@ public class Polynomial {
 
     // Gets the lowest common multiple of the denominator
     // EFFECTS: gets the lcm
-    private int getLCM(Polynomial polynomial) {
+    private static int getLCM(Polynomial polynomial) {
         // get LCM of the denominators
         int lcm = 1;
         for (Term term : polynomial.orderedTerms) {
@@ -203,7 +203,7 @@ public class Polynomial {
     // and the coefficients are integers (multiply all by lcm)
     // MODIFIES: polynomial
     // EFFECTS: Normalizes the polynomial
-    private void normalize(Polynomial polynomial, int lcm, int numberOfZeroIntercepts) {
+    private static void normalize(Polynomial polynomial, int lcm, int numberOfZeroIntercepts) {
         // subtract the degree, increase numerator to integer-normalized value, and set denominator to 1
         for (Term term : polynomial.orderedTerms) {
             term.setDegree(term.getDegree() - numberOfZeroIntercepts);
@@ -216,7 +216,7 @@ public class Polynomial {
     // also, factors out the rational components found in the polynomial
     // MODIFIES: coefficients, polynomial
     // EFFECTS: check for and add rational coefficients
-    private void runRationalRootTheorem(List<String> coefficients, Polynomial normalizedPoly) {
+    private static void runRationalRootTheorem(List<String> coefficients, Polynomial normalizedPoly) {
         // get factors for leading coefficient and constant (both now an integer)
         int lastPos = normalizedPoly.orderedTerms.size() - 1;
         int leadingCoefficient = normalizedPoly.orderedTerms.get(lastPos).getNumerator();
@@ -244,7 +244,7 @@ public class Polynomial {
     // factors out rational solution from polynomial
     // MODIFIES: polynomial
     // EFFECTS: factors out rational solution from polynomial
-    private void factorOut(int n, int d, Polynomial normalizedPoly) {
+    private static void factorOut(int n, int d, Polynomial normalizedPoly) {
         int size = normalizedPoly.orderedTerms.size();
         if (size <= 1) {
             return;
@@ -277,7 +277,7 @@ public class Polynomial {
     // at this point, assume no rationals exists (and has such no linears)
     // MODIFIES: coefficients
     // EFFECTS: check for and solves quadratic/linear function
-    private void checkSolveQuadratic(List<String> coefficients, Polynomial polynomial) {
+    private static void checkSolveQuadratic(List<String> coefficients, Polynomial polynomial) {
         int a = 0;
         int b = 0;
         int c = 0;
@@ -298,7 +298,7 @@ public class Polynomial {
     // at this point, assume no rationals exists (and has such no linears)
     // MODIFIES: coefficients
     // EFFECTS: check for and solves quadratic/linear functions
-    private void checkSolveQuadratic(List<String> coefficients, int a, int b, int c) {
+    private static void checkSolveQuadratic(List<String> coefficients, int a, int b, int c) {
         if (a != 0) {
             if (a < 0) {
                 a *= -1;

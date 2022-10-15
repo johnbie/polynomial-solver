@@ -6,7 +6,7 @@ import java.util.List;
 /*
  * The math utility class for natural numbers N
  */
-public class NMathUtil {
+public final class NMathUtil {
     // Returns the factors for a positive integer (i.e. 6 has factors of [1,2,3,6]
     // REQUIRES: positive integer (a >= 0)
     // EFFECTS: Returns the factors

@@ -3,10 +3,11 @@ package model;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.lang.Math;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-final class NMathUtilTest {
+class NMathUtilTest {
     @Test
     public void testGetFactors() {
         assertEquals("[1]", NMathUtil.getFactors(1).toString());
@@ -19,6 +20,7 @@ final class NMathUtilTest {
     public void testGetGreatestCommonDivisorForRelativePrime() {
         int gcd = NMathUtil.getGreatestCommonDivisor(7,13);
         assertEquals(1, gcd);
+
     }
 
     @Test
