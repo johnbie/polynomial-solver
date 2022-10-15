@@ -77,18 +77,33 @@ class PolynomialTest {
     }
 
     @Test
-    public void testGetXIntercepts() {
+    public void testGetXInterceptsZero() {
         Polynomial zero = new Polynomial();
         assertEquals("All real numbers", zero.getXIntercepts());
+    }
 
+    @Test
+    public void testGetXInterceptsInteger() {
         Polynomial polynomial1 = new Polynomial("x^3 + 6x^2 + 11x + 6");
         assertEquals("[-1, -2, -3]", polynomial1.getXIntercepts());
 
-        Polynomial polynomial2 = new Polynomial("x^2 + 7/15x + -4/15");
-        assertEquals("[1/3, -4/5]", polynomial2.getXIntercepts());
+        Polynomial polynomial2 = new Polynomial("x^4 + -x^3 + x + -1");
+        assertEquals("[1, -1]", polynomial2.getXIntercepts());
+    }
 
-        Polynomial polynomial3 = new Polynomial("x^3 + -11/4x^2 + -27/2x + 45/4");
-        assertEquals("[-3, 3/4, 5]", polynomial3.getXIntercepts());
+    @Test
+    public void testGetXInterceptsRational() {
+        Polynomial polynomial1 = new Polynomial("x^2 + 7/15x + -4/15");
+        assertEquals("[1/3, -4/5]", polynomial1.getXIntercepts());
+
+        Polynomial polynomial2 = new Polynomial("x^3 + -11/4x^2 + -27/2x + 45/4");
+        assertEquals("[-3, 3/4, 5]", polynomial2.getXIntercepts());
+    }
+
+    @Test
+    public void testGetXInterceptsSquareRooted() {
+        Polynomial polynomial = new Polynomial("x^3 + 1/2x^2 + -x");
+        assertEquals("[0, -1+sqrt(17)/4, -1-sqrt(17)/4]", polynomial.getXIntercepts());
     }
 
     @Test

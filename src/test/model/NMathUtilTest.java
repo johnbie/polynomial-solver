@@ -17,10 +17,21 @@ class NMathUtilTest {
     }
 
     @Test
+    public void testGetGreatestCommonDivisorForZero() {
+        int gcd1 = NMathUtil.getGreatestCommonDivisor(1,0);
+        assertEquals(1, gcd1);
+
+        int gcd2 = NMathUtil.getGreatestCommonDivisor(0,1);
+        assertEquals(1, gcd2);
+
+        int gcd3 = NMathUtil.getGreatestCommonDivisor(0,0);
+        assertEquals(1, gcd3);
+    }
+
+    @Test
     public void testGetGreatestCommonDivisorForRelativePrime() {
         int gcd = NMathUtil.getGreatestCommonDivisor(7,13);
         assertEquals(1, gcd);
-
     }
 
     @Test

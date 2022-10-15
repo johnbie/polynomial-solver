@@ -214,6 +214,7 @@ public class Polynomial {
 
     // check for and add rational coefficients based on the Rational Root Theorem
     // also, factors out the rational components found in the polynomial
+    // REQUIRES: normalized polynomial (denominators all equal 1)
     // MODIFIES: coefficients, polynomial
     // EFFECTS: check for and add rational coefficients
     private static void runRationalRootTheorem(List<String> coefficients, Polynomial normalizedPoly) {
@@ -242,13 +243,11 @@ public class Polynomial {
     }
 
     // factors out rational solution from polynomial
+    // REQUIRES: polynomial that can be factored by the input
     // MODIFIES: polynomial
     // EFFECTS: factors out rational solution from polynomial
     private static void factorOut(int n, int d, Polynomial normalizedPoly) {
         int size = normalizedPoly.orderedTerms.size();
-        if (size <= 1) {
-            return;
-        }
 
         List<Term> newTerms = new LinkedList<>();
         Term nextTerm = normalizedPoly.orderedTerms.get(size - 1);
@@ -260,7 +259,7 @@ public class Polynomial {
             nextTerm = normalizedPoly.orderedTerms.get(i);
             int nextDegree = nextTerm.getDegree();
 
-            while (newDegree >= nextDegree && remainder != 0) {
+            while (newDegree >= nextDegree) {
                 newTerms.add(0, new Term(remainder, 1, newDegree));
                 if (newDegree == nextDegree) {
                     remainder = (nextTerm.getNumerator() + (remainder * n)) / d;
@@ -275,6 +274,7 @@ public class Polynomial {
 
     // check for and solves quadratic function
     // at this point, assume no rationals exists (and has such no linears)
+    // REQUIRES: a != 0
     // MODIFIES: coefficients
     // EFFECTS: check for and solves quadratic/linear function
     private static void checkSolveQuadratic(List<String> coefficients, Polynomial polynomial) {
@@ -296,6 +296,7 @@ public class Polynomial {
 
     // check for and solves quadratic function
     // at this point, assume no rationals exists (and has such no linears)
+    // REQUIRES: a != 0
     // MODIFIES: coefficients
     // EFFECTS: check for and solves quadratic/linear functions
     private static void checkSolveQuadratic(List<String> coefficients, int a, int b, int c) {
