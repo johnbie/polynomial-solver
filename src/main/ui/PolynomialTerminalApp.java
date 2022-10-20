@@ -18,7 +18,7 @@ public class PolynomialTerminalApp {
     // MODIFIES: this
     // EFFECTS: initializes variables
     private void init() {
-        polynomial = new Polynomial("x^2 + 7/15x + -4/15");
+        polynomial = new Polynomial("x^2 + 7/15x - 4/15");
         input = new Scanner(System.in);
         input.useDelimiter("\n");
     }

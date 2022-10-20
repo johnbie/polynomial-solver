@@ -1,6 +1,5 @@
 package model;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -56,6 +55,18 @@ class TermTest {
     public void testIsZeroFalse() {
         Term term = new Term(1,1,0);
         assertFalse(term.isZero());
+    }
+
+    @Test
+    public void testIsNegativeTrue() {
+        Term term = new Term(-1, 1, 0);
+        assertTrue(term.isNegative());
+    }
+
+    @Test
+    public void testIsNegativeFalse() {
+        Term term = new Term(1, 1, 0);
+        assertFalse(term.isNegative());
     }
 
     @Test
@@ -148,6 +159,23 @@ class TermTest {
         assertEquals(2, derivative.getNumerator());
         assertEquals(1, derivative.getDenominator());
         assertEquals(2, derivative.getDegree());
+    }
+
+    @Test
+    public void testGetAbs() {
+        Term term = new Term(-1, 2, 3);
+        Term abs = term.getAbs();
+        assertEquals(1, abs.getNumerator());
+        assertEquals(2, abs.getDenominator());
+        assertEquals(3, abs.getDegree());
+    }
+
+    @Test
+    public void testGetCopy() {
+        Term term = new Term(1, 2, 3);
+        assertEquals(1, term.getNumerator());
+        assertEquals(2, term.getDenominator());
+        assertEquals(3, term.getDegree());
     }
 
     @Test

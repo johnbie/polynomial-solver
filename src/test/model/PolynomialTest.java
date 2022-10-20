@@ -12,8 +12,8 @@ class PolynomialTest {
         Polynomial zero2 = new Polynomial("");
         assertEquals("0", zero2.toString());
 
-        Polynomial polynomial = new Polynomial("x^2 + 7/15x + -4/15");
-        assertEquals("x^2 + 7/15x + -4/15", polynomial.toString());
+        Polynomial polynomial = new Polynomial("x^2 + 7/15x - 4/15");
+        assertEquals("x^2 + 7/15x - 4/15", polynomial.toString());
     }
     @Test
     public void testAddTerm() {

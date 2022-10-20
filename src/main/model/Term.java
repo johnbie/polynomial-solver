@@ -94,6 +94,12 @@ public class Term {
         return numerator == 0;
     }
 
+    // Returns whether the term is negative (i.e. -1, -x, -x^2, etc)
+    // EFFECTS: Returns whether the numerator is negative
+    public boolean isNegative() {
+        return numerator < 0;
+    }
+
     // Evaluates the polynomial at point x
     // EFFECTS: Returns the function result
     public double evaluateAtPoint(double point) {
@@ -127,6 +133,16 @@ public class Term {
             return new Term(this.numerator * this.degree, this.denominator, this.degree - 1);
         } else {
             return new Term(); // 0
+        }
+    }
+
+    // Gets the absolute value of the term (i.e. not negative)
+    // EFFECTS: Gets the absolute value of the term
+    public Term getAbs() {
+        if (this.numerator >= 0) {
+            return new Term(this.numerator, this.denominator, this.degree);
+        } else {
+            return new Term(-this.numerator, this.denominator, this.degree);
         }
     }
 

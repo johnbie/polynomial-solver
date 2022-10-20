@@ -23,16 +23,23 @@ public class Polynomial {
     // EFFECTS: Constructs a term equal to the constant 0
     public Polynomial(String polynomialStr) {
         orderedTerms = new LinkedList<>();
-        if (!Objects.equals(polynomialStr, "")) {
-            if (polynomialStr.contains(" + ")) {
-                String[] termStrings = polynomialStr.split(" \\+ ");
-                for (String termStr : termStrings) {
-                    Term term = new Term(termStr);
-                    addTerm(term);
+        while (!Objects.equals(polynomialStr, "")) {
+            if (polynomialStr.contains(" + ") || polynomialStr.contains(" - ")) {
+                String nextTermString = polynomialStr.split(" [+-] ")[0];
+                Term term = new Term(nextTermString);
+                addTerm(term);
+                polynomialStr = polynomialStr.replace(nextTermString, "");
+
+                String operator = polynomialStr.substring(0,3);
+                if (Objects.equals(operator, " + ")) {
+                    polynomialStr = polynomialStr.substring(3);
+                } else if (Objects.equals(operator, " - ")) {
+                    polynomialStr = "-" + polynomialStr.substring(3);
                 }
             } else {
                 Term term = new Term(polynomialStr);
                 addTerm(term);
+                return;
             }
         }
     }
@@ -175,7 +182,14 @@ public class Polynomial {
         if (this.orderedTerms.size() > 0) {
             StringBuilder string = new StringBuilder(this.orderedTerms.get(this.orderedTerms.size() - 1).toString());
             for (int i = this.orderedTerms.size() - 2; i >= 0; i--) {
-                string.append(" + ").append(this.orderedTerms.get(i).toString());
+                Term term = this.orderedTerms.get(i);
+
+                if (!term.isNegative()) {
+                    string.append(" + ").append(term);
+                } else {
+                    string.append(" - ").append(term.getAbs());
+                }
+
             }
             return string.toString();
         } else {
