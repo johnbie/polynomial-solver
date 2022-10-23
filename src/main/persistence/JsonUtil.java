@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 public class JsonUtil {
 
     // EFFECTS: reads json text file as json array
-    public static JSONArray getJSONArray(String source) throws IOException {
+    public static JSONArray getArray(String source) throws IOException {
         String content = readFile(source);
         return new JSONArray(content);
     }

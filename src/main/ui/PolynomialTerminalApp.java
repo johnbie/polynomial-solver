@@ -186,7 +186,7 @@ public class PolynomialTerminalApp {
     // EFFECTS: generates sample polynomials and writes them to file
     private void savePolynomial() {
         try {
-            JSONArray polynomials = JsonUtil.getJSONArray(polynomialFilePath);
+            JSONArray polynomials = JsonUtil.getArray(polynomialFilePath);
             polynomials.put(polynomial.toString());
             JsonUtil.writeFile(polynomialFilePath, polynomials);
             System.out.println("Saved polynomial!");
@@ -199,7 +199,7 @@ public class PolynomialTerminalApp {
 
     private void loadPolynomial() {
         try {
-            JSONArray polynomials = JsonUtil.getJSONArray(polynomialFilePath);
+            JSONArray polynomials = JsonUtil.getArray(polynomialFilePath);
             listPolynomials(polynomials);
             displayLoadOptions();
 
