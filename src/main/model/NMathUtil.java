@@ -22,20 +22,38 @@ public final class NMathUtil {
         return factors;
     }
 
+    // Returns the largest factorable square number from integer
+    // (i.e. 10^2 can be factored out of 200, leaving 2)
+    // REQUIRES: positive integer (a >= 0); negative numbers will just return 1
+    // EFFECTS: Returns the largest factorable square number from integer
+    public static int getLargestFactorableSquare(int a) {
+        int result = 1;
+        int n = 2;
+
+        while (n * n <= a) {
+            while (a % (n * n) == 0) {
+                result *= n;
+                a /= n * n;
+            }
+            n++;
+        }
+        return result;
+    }
+
     // Returns the lowest common multiple of two numbers.
     // Code is based on the observation that lcm(a,b) = |ab|/gcd(a,b) = |a| * |b|/gcd(a,b)
     // (https://en.wikipedia.org/wiki/Least_common_multiple)
     // REQUIRES: two positive integers (a >= 0; b >= 0)
     // EFFECTS: Returns the lowest common multiple
-    public static int getLowestCommonMultiple(int a, int b) {
-        return a / NMathUtil.getGreatestCommonDivisor(a,b) * b;
+    public static int getLCM(int a, int b) {
+        return a / NMathUtil.getGCD(a,b) * b;
     }
 
     // Returns the greatest common divisor of two numbers.
     // Code is based on a subtraction-based implementation of the Euclid's Algorithm (https://en.wikipedia.org/wiki/Euclidean_algorithm)
     // REQUIRES: two positive integers (a >= 0; b >= 0)
     // EFFECTS: Returns the greatest common divisor
-    public static int getGreatestCommonDivisor(int a, int b) {
+    public static int getGCD(int a, int b) {
         if (a == 0 || b == 0) {
             return 1;
         }

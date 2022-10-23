@@ -187,7 +187,7 @@ public class Term {
             this.numerator *= -1;
         }
 
-        int gcd = NMathUtil.getGreatestCommonDivisor(Math.abs(numerator), denominator);
+        int gcd = NMathUtil.getGCD(Math.abs(numerator), denominator);
         if (gcd > 1) {
             this.numerator /= gcd;
             this.denominator /= gcd;

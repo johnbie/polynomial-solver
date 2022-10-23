@@ -206,7 +206,7 @@ public class Polynomial {
             int denominator = term.getDenominator();
 
             if (denominator > 1) {
-                lcm = NMathUtil.getLowestCommonMultiple(lcm,denominator);
+                lcm = NMathUtil.getLCM(lcm,denominator);
             }
         }
 
@@ -323,10 +323,25 @@ public class Polynomial {
                 denominator *= -1;
             }
 
+            // get and factor out squares
             int rootedPart = (b * b) - (4 * a * c);
-            if (rootedPart > 0) {
-                coefficients.add(numerator + "+sqrt(" + rootedPart + ")/" + denominator);
-                coefficients.add(numerator + "-sqrt(" + rootedPart + ")/" + denominator);
+            int squaredRootedPart = NMathUtil.getLargestFactorableSquare(rootedPart);
+            rootedPart /= squaredRootedPart * squaredRootedPart;
+
+            // simplify if needed
+            int gcd = NMathUtil.getGCD(Math.abs(numerator), NMathUtil.getGCD(denominator, squaredRootedPart));
+            numerator /= gcd;
+            denominator /= gcd;
+            squaredRootedPart /= gcd;
+            String denominatorString = denominator > 1 ? "/" + denominator : "";
+
+            // add coefficients
+            if (squaredRootedPart > 1) {
+                coefficients.add(numerator + "+" + squaredRootedPart + "sqrt(" + rootedPart + ")" + denominatorString);
+                coefficients.add(numerator + "-" + squaredRootedPart + "sqrt(" + rootedPart + ")" + denominatorString);
+            } else if (rootedPart > 0) {
+                coefficients.add(numerator + "+sqrt(" + rootedPart + ")" + denominatorString);
+                coefficients.add(numerator + "-sqrt(" + rootedPart + ")" + denominatorString);
             }
         }
     }
