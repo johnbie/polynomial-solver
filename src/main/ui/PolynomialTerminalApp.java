@@ -55,11 +55,11 @@ public class PolynomialTerminalApp {
         System.out.println("\th -> display options aka help");
         System.out.println("\ti -> input from terminal");
         System.out.println("\to -> output to terminal");
-        System.out.println("\ta -> add term to polynomial");
+        System.out.println("\ts -> save polynomial");
+        System.out.println("\tl -> list and load polynomials"); // ability to delete, reset, and order also stored
         System.out.println("\tr -> reset to zero polynomial");
         System.out.println("\te -> evaluate at point (decimal)");
-        System.out.println("\ts -> get the summary of the polynomial (x-y intercepts, critical points, etc)");
-        System.out.println("\td -> get derivative");
+        System.out.println("\td -> get the detailed summary of the polynomial (x-y intercepts, critical points, etc)");
         System.out.println("\tq -> quit");
     }
 
@@ -69,20 +69,24 @@ public class PolynomialTerminalApp {
     private void processCommand(String command) {
         if (command.equals("h")) {
             displayOptions();
-        } else if (command.equals("i")) {
+        } else if (command.equals("i")) { // input
             setPolynomialFromInput();
-        } else if (command.equals("o")) {
+        } else if (command.equals("o")) { // output
             System.out.println("\nPolynomial: " + polynomial);
-        } else if (command.equals("a")) {
-            addPolynomialFromInput();
-        } else if (command.equals("r")) {
+        } else if (command.equals("s")) { // save
+            return;
+        } else if (command.equals("l")) { // list/load
+            return;
+//        } else if (command.equals("a")) { // add term
+//            addPolynomialFromInput();
+        } else if (command.equals("r")) { // reset
             resetPolynomial();
-        } else if (command.equals("e")) {
+        } else if (command.equals("e")) { // evaluate
             evaluateAtPoint();
-        } else if (command.equals("s")) {
+        } else if (command.equals("d")) { // detail
             getSummary();
-        } else if (command.equals("d")) {
-            System.out.println("\nd/dx Polynomial: " + polynomial.getDerivative());
+        } else if (command.equals("g")) { // graph
+            return;
         } else { // quit accounted for in outer function
             System.out.println("\nSelection not valid...");
         }
@@ -129,7 +133,8 @@ public class PolynomialTerminalApp {
     // gets summary of the polynomial
     // EFFECTS: gets summary of the polynomial
     private void getSummary() {
-        System.out.println("\nSummary: ");
+        System.out.println("\nSummary for " + polynomial + ": ");
+        System.out.println("\tderivative d/dx: " + polynomial.getDerivative());
         System.out.println("\tx-intercepts: " + polynomial.getXIntercepts());
         System.out.println("\ty-intercept: " + polynomial.getYIntercept());
         System.out.println("\tcritical points: " + polynomial.getCriticalPoints());
