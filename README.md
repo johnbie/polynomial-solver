@@ -3,7 +3,7 @@ By Jangwon Lee
 
 ## Introduction
 
-This application summarizes polynomials provided by the user. It gives valuable informations such as the x and y intercepts, inflection points, and concave/convex regions, and it also graphs the polynomial onto the GUI. It would be used by calc 1 and 2 students, as well as anyone who's curious about polynomials. 
+This application summarizes polynomials provided by the user. It gives valuable information such as the x and y intercepts, inflection points, and concave/convex regions, and it also graphs the polynomial onto the GUI. It would be used by calc 1 and 2 students, as well as anyone who's curious about polynomials. 
 
 I created this project because I wanted to create tools that help students understand difficult mathematical concepts. I also wanted to try graphing arbitrary curves and felt that my calculus knowledge would help me do just that.
 
@@ -50,9 +50,10 @@ List of User Stories:
  - As a college student, I want to see all the critical and inflection points.
  - As a college student, I want to just quickly get the derivative of the function.
  - As a user, I want to just check the values of the function at specific point `f(a)`.
+ - As a marker/tester, I want a list of polynomials loaded in by default that I could test with.
+ - As a student, I want to save a list of polynomials first before looking at each one.
 
 Future Stories:
  - As a math tutor, I want to be able to quickly generate and plot the polynomials so that I can teach my students math concepts visually.
-	- By evaluating the point value of the function and derivative, it's possible to plot the curve with Bezier curve
- - As a tester, I want to just store and maintaint a list of polynomials I would test with by copy-pasting.
+	- By evaluating the point value of the function and derivative, it's possible to plot the curve with Bezier curve.
  - As a college student, I want to see where all the function increases, decreases, and is concave up or down. (MAYBE)
