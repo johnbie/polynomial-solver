@@ -3,9 +3,10 @@ package model;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class Solution {
+public class Solution implements Comparable<Solution>  {
     private static final DecimalFormat ROUNDING_FORMAT = new DecimalFormat("0.000000");
     private double value;
     private String displayText;
@@ -81,19 +82,21 @@ public class Solution {
         // check and solve for quadratic
         checkSolveQuadratic(solutions, terms);
 
-        //
+        // TODO: add real number solutions
 
         // return all the coefficients as a list
+        Collections.sort(solutions);
         return solutions;
-    }
-
-    private static List<Solution> sortAscending() {
-        return null;
     }
 
     @Override
     public String toString() {
         return displayText;
+    }
+
+    @Override
+    public int compareTo(Solution solution) {
+        return Double.compare(this.value, solution.value);
     }
 
     // Gets the lowest common multiple of the denominator
