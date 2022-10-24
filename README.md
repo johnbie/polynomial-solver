@@ -10,7 +10,7 @@ I created this project because I wanted to create tools that help students under
 
 ## Features
 
-The application will give take in a rational polynomial provided by the user and output both a graph and a summary of it. The application will return values in symbolic form when possible (i.e. fractions and square roots) and decimal approximations otherwise (up to 10 decimal places).
+The application will give take in a rational polynomial provided by the user and output both a graph and a summary of it. The application will return values in symbolic form when possible (i.e. fractions and square roots) and decimal approximations otherwise (up to 6 decimal places).
 
 List of traits summarized:
  - List of x intercepts (i.e. zeroes of the polynomial)

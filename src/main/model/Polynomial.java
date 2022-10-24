@@ -1,6 +1,5 @@
 package model;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -9,8 +8,7 @@ import java.util.Objects;
  * Represents the polynomial object and ways to operate on it
  */
 public class Polynomial {
-    private List<Term> orderedTerms;
-    private static final double EPSILON = 0.0000000001;
+    private final List<Term> orderedTerms;
 
     // Constructs a polynomial
     // EFFECTS: Constructs a polynomial with an empty linked list named `orderedTerms`
@@ -77,6 +75,12 @@ public class Polynomial {
     // Evaluates the polynomial at point x
     // EFFECTS: Returns the function result
     public double evaluateAtPoint(double point) {
+        return evaluateAtPoint(point, this.orderedTerms);
+    }
+
+    // Evaluates the polynomial at point x
+    // EFFECTS: Returns the function result
+    public static double evaluateAtPoint(double point, List<Term> orderedTerms) {
         double sum = 0;
 
         for (Term term : orderedTerms) {
@@ -84,6 +88,19 @@ public class Polynomial {
         }
 
         return sum;
+    }
+
+    // Gets the deep-copy of the terms
+    // EFFECTS: gets the terms
+    public List<Term> getTerms() {
+        List<Term> terms = new LinkedList<>();
+
+        // add the derivative of each term as long as they're not zero
+        for (Term term : orderedTerms) {
+            terms.add(term.createCopy());
+        }
+
+        return terms;
     }
 
     // Gets the derivative of the polynomial
@@ -112,67 +129,22 @@ public class Polynomial {
         }
     }
 
-    // Gets the y intercepts of the function as a rational if possible
+    // Gets the x intercepts of the function as a rational if possible
     // EFFECTS: gets the x intercepts
-    public String getXIntercepts() {
-        return getXIntercepts(createCopy());
-    }
-
-    // Gets the y intercepts of the function in parameter as a rational if possible
-    // EFFECTS: gets the x intercepts
-    protected String getXIntercepts(Polynomial clone) {
-        int size = clone.orderedTerms.size();
-        if (size == 0) {
-            return "All real numbers";
-        }
-
-        List<String> coefficients = new ArrayList<>();
-
-        // purpose: factor out x=0 from polynomial until constant exists
-        // method: get the degree of last term; this is the number of x=0
-        int numberOfZeroIntercepts = clone.orderedTerms.get(0).getDegree();
-        if (numberOfZeroIntercepts > 0) {
-            coefficients.add("0");
-        }
-
-        // no more coefficients because the remaining "factor" is a constant
-        if (size == 1) {
-            return coefficients.toString();
-        }
-
-        normalize(clone, getLCM(clone), numberOfZeroIntercepts);
-        runRationalRootTheorem(coefficients, clone);
-
-        // check and solve for quadratic
-        checkSolveQuadratic(coefficients, clone);
-        // couldn't solve for arbitrary values
-
-        // return all the coefficients as a list
-        return coefficients.toString();
+    public List<Solution> getXIntercepts() {
+        return Solution.solveForPolynomial(this);
     }
 
     // Gets the critical points of the function as a rational if possible
     // EFFECTS: gets the critical points
-    public String getCriticalPoints() {
-        return getXIntercepts(getDerivative());
+    public List<Solution> getCriticalPoints() {
+        return Solution.solveForPolynomial(getDerivative());
     }
 
     // Gets the inflection points of the function as a rational if possible
     // EFFECTS: gets the inflection points
-    public String getInflectionPoints() {
-        return getXIntercepts(getDerivative().getDerivative());
-    }
-
-    // creates a copy of the polynomial
-    // EFFECTS: Returns the polynomial copy
-    public Polynomial createCopy() {
-        Polynomial polynomial = new Polynomial();
-
-        for (Term term : orderedTerms) {
-            polynomial.orderedTerms.add(term.createCopy());
-        }
-
-        return polynomial;
+    public List<Solution> getInflectionPoints() {
+        return Solution.solveForPolynomial(getDerivative().getDerivative());
     }
 
     // Overriding toString() method of String class
@@ -194,155 +166,6 @@ public class Polynomial {
             return string.toString();
         } else {
             return "0";
-        }
-    }
-
-    // Gets the lowest common multiple of the denominator
-    // EFFECTS: gets the lcm
-    private static int getLCM(Polynomial polynomial) {
-        // get LCM of the denominators
-        int lcm = 1;
-        for (Term term : polynomial.orderedTerms) {
-            int denominator = term.getDenominator();
-
-            if (denominator > 1) {
-                lcm = NMathUtil.getLCM(lcm,denominator);
-            }
-        }
-
-        return lcm;
-    }
-
-    // Normalizes the polynomial such that the x's are factored out
-    // and the coefficients are integers (multiply all by lcm)
-    // MODIFIES: polynomial
-    // EFFECTS: Normalizes the polynomial
-    private static void normalize(Polynomial polynomial, int lcm, int numberOfZeroIntercepts) {
-        // subtract the degree, increase numerator to integer-normalized value, and set denominator to 1
-        for (Term term : polynomial.orderedTerms) {
-            term.setDegree(term.getDegree() - numberOfZeroIntercepts);
-            term.setNumerator(term.getNumerator() * lcm);
-            term.setDenominator(1); // for coverage; redundant
-        }
-    }
-
-    // check for and add rational coefficients based on the Rational Root Theorem
-    // also, factors out the rational components found in the polynomial
-    // REQUIRES: normalized polynomial (denominators all equal 1)
-    // MODIFIES: coefficients, polynomial
-    // EFFECTS: check for and add rational coefficients
-    private static void runRationalRootTheorem(List<String> coefficients, Polynomial normalizedPoly) {
-        // get factors for leading coefficient and constant (both now an integer)
-        int lastPos = normalizedPoly.orderedTerms.size() - 1;
-        int leadingCoefficient = normalizedPoly.orderedTerms.get(lastPos).getNumerator();
-        List<Integer> leadingCoefficientFactors = NMathUtil.getFactors(Math.abs(leadingCoefficient));
-        int constant = normalizedPoly.orderedTerms.get(0).getNumerator();
-        List<Integer> constantFactors = NMathUtil.getFactors(Math.abs(constant));
-
-        // use epsilon and absolute value to account for rounding error
-        for (Integer constantFactor : constantFactors) {
-            for (Integer coefficientFactor : leadingCoefficientFactors) {
-                double pointValPositive = normalizedPoly.evaluateAtPoint((double)(constantFactor) / coefficientFactor);
-                if (Math.abs(pointValPositive) < EPSILON) {
-                    coefficients.add(constantFactor + (coefficientFactor == 1 ? "" : "/" + coefficientFactor));
-                    factorOut(constantFactor, coefficientFactor, normalizedPoly);
-                }
-                double pointValNegative = normalizedPoly.evaluateAtPoint((double)(-constantFactor) / coefficientFactor);
-                if (Math.abs(pointValNegative) < EPSILON) {
-                    coefficients.add("-" + constantFactor + (coefficientFactor == 1 ? "" : "/" + coefficientFactor));
-                    factorOut(-constantFactor, coefficientFactor, normalizedPoly);
-                }
-            }
-        }
-    }
-
-    // factors out rational solution from polynomial
-    // REQUIRES: polynomial that can be factored by the input
-    // MODIFIES: polynomial
-    // EFFECTS: factors out rational solution from polynomial
-    private static void factorOut(int n, int d, Polynomial normalizedPoly) {
-        int size = normalizedPoly.orderedTerms.size();
-
-        List<Term> newTerms = new LinkedList<>();
-        Term nextTerm = normalizedPoly.orderedTerms.get(size - 1);
-        int newDegree = nextTerm.getDegree() - 1;
-        int remainder = nextTerm.getNumerator() / d;
-
-        // look at terms with in reverse order (highest degree first)
-        for (int i = size - 2; i >= 0; i--) {
-            nextTerm = normalizedPoly.orderedTerms.get(i);
-            int nextDegree = nextTerm.getDegree();
-
-            while (newDegree >= nextDegree) {
-                newTerms.add(0, new Term(remainder, 1, newDegree));
-                if (newDegree == nextDegree) {
-                    remainder = (nextTerm.getNumerator() + (remainder * n)) / d;
-                } else {
-                    remainder = (remainder * n) / d;
-                }
-                newDegree--;
-            }
-        }
-        normalizedPoly.orderedTerms = newTerms;
-    }
-
-    // check for and solves quadratic function
-    // at this point, assume no rationals exists (and has such no linears)
-    // MODIFIES: coefficients
-    // EFFECTS: check for and solves quadratic/linear function
-    private static void checkSolveQuadratic(List<String> coefficients, Polynomial polynomial) {
-        int a = 0;
-        int b = 0;
-        int c = 0;
-
-        for (Term term : polynomial.orderedTerms) {
-            if (term.getDegree() == 0) {
-                c = term.getNumerator();
-            } else if (term.getDegree() == 1) {
-                b = term.getNumerator();
-            } else if (term.getDegree() == 2) {
-                a = term.getNumerator();
-            } else {
-                return; // NOT a quadratic
-            }
-        }
-        checkSolveQuadratic(coefficients, a, b, c);
-    }
-
-    // check for and solves quadratic function
-    // at this point, assume no rationals exists (and has such no linears)
-    // MODIFIES: coefficients
-    // EFFECTS: check for and solves quadratic/linear functions
-    private static void checkSolveQuadratic(List<String> coefficients, int a, int b, int c) {
-        if (a != 0) {
-            int denominator = 2 * a;
-            int numerator = -b;
-
-            if (denominator < 0) {
-                numerator *= -1;
-                denominator *= -1;
-            }
-
-            // get and factor out squares
-            int rootedPart = (b * b) - (4 * a * c);
-            int squaredRootedPart = NMathUtil.getLargestFactorableSquare(rootedPart);
-            rootedPart /= squaredRootedPart * squaredRootedPart;
-
-            // simplify if needed
-            int gcd = NMathUtil.getGCD(Math.abs(numerator), NMathUtil.getGCD(denominator, squaredRootedPart));
-            numerator /= gcd;
-            denominator /= gcd;
-            squaredRootedPart /= gcd;
-            String denominatorString = denominator > 1 ? "/" + denominator : "";
-
-            // add coefficients
-            if (squaredRootedPart > 1) {
-                coefficients.add(numerator + "+" + squaredRootedPart + "sqrt(" + rootedPart + ")" + denominatorString);
-                coefficients.add(numerator + "-" + squaredRootedPart + "sqrt(" + rootedPart + ")" + denominatorString);
-            } else if (rootedPart > 0) {
-                coefficients.add(numerator + "+sqrt(" + rootedPart + ")" + denominatorString);
-                coefficients.add(numerator + "-sqrt(" + rootedPart + ")" + denominatorString);
-            }
         }
     }
 }
