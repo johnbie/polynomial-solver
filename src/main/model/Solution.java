@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class Solution implements Comparable<Solution>  {
-    private static double DELTA = 0.0001;
+    private static final double DELTA = 0.0001;
     private static final DecimalFormat ROUNDING_FORMAT = new DecimalFormat("0.000000");
     private double value;
     private String displayText;
@@ -257,7 +257,9 @@ public class Solution implements Comparable<Solution>  {
         }
     }
 
-    private static void checkBetweenOneAndInfinity(List<Solution> solutions, List<Term> normalizedTerms, boolean isPositive) {
+    private static void checkBetweenOneAndInfinity(List<Solution> solutions,
+                                                   List<Term> normalizedTerms,
+                                                   boolean isPositive) {
         double point = isPositive ? 1 : -1;
         Term greatestTerm = normalizedTerms.get(normalizedTerms.size() - 1);
         double lastSolution = Polynomial.evaluateAtPoint(point, normalizedTerms) / greatestTerm.evaluateAtPoint(point);
@@ -277,7 +279,8 @@ public class Solution implements Comparable<Solution>  {
                 deltasSinceLastSignificantEvent = 0;
             }
 
-            if (lastSolution > 0
+            if (lastSolution > 0 && lastSolution < 2
+                    && Math.abs(lastDifference) < DELTA
                     && Math.abs(lastDifference) > Math.abs(lastSolution - currentSolution)) {
                 deltasSinceLastSignificantEvent++;
             } else {
@@ -289,7 +292,9 @@ public class Solution implements Comparable<Solution>  {
     }
 
     // confirmed that there's one and exactly one solution within range
-    private static void addSolutionFromRange(List<Solution> solutions, List<Term> normalizedTerms, double left, double right) {
+    private static void addSolutionFromRange(List<Solution> solutions,
+                                             List<Term> normalizedTerms,
+                                             double left, double right) {
         double leftValue = Polynomial.evaluateAtPoint(left, normalizedTerms);
         double midPoint = (left + right) / 2;
         double value = Polynomial.evaluateAtPoint(midPoint, normalizedTerms);

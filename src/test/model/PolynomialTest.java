@@ -125,6 +125,9 @@ class PolynomialTest {
 
         Polynomial polynomial4 = new Polynomial("-x^4 + 3x + 100000");
         assertEquals("[-17.780422, 17.785166]", polynomial4.getXIntercepts().toString());
+
+        Polynomial polynomial5 = new Polynomial("-1/10000x^4 - x^2 + 12x - 20");
+        assertEquals("[2.000200, 9.879109]", polynomial5.getXIntercepts().toString());
     }
 
     @Test
