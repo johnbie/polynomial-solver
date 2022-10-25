@@ -119,6 +119,12 @@ class PolynomialTest {
 
         Polynomial polynomial2 = new Polynomial("1/14x^3 + 2x^2 + 10x - 10");
         assertEquals("[-21.024318, -7.826503, 0.850821]", polynomial2.getXIntercepts().toString());
+
+        Polynomial polynomial3 = new Polynomial("x^3 - 100000");
+        assertEquals("[46.415888]", polynomial3.getXIntercepts().toString());
+
+        Polynomial polynomial4 = new Polynomial("-x^4 + 3x + 100000");
+        assertEquals("[-17.780422, 17.785166]", polynomial4.getXIntercepts().toString());
     }
 
     @Test
