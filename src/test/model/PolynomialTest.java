@@ -114,10 +114,11 @@ class PolynomialTest {
 
     @Test
     public void testGetXInterceptsSquareUnfoundRoots() {
-        Polynomial polynomial1 = new Polynomial("x^7 + -1");
-        assertEquals("[1]", polynomial1.getXIntercepts().toString());
+        Polynomial polynomial1 = new Polynomial("-x^3 + x^2 + x + 1");
+        assertEquals("[1.839287]", polynomial1.getXIntercepts().toString());
 
-        // TODO: test for all reals
+        Polynomial polynomial2 = new Polynomial("1/14x^3 + 2x^2 + 10x - 10");
+        assertEquals("[-21.024318, -7.826503, 0.850821]", polynomial2.getXIntercepts().toString());
     }
 
     @Test

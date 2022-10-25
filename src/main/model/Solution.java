@@ -7,10 +7,10 @@ import java.util.Collections;
 import java.util.List;
 
 public class Solution implements Comparable<Solution>  {
+    private static double DELTA = 0.0001;
     private static final DecimalFormat ROUNDING_FORMAT = new DecimalFormat("0.000000");
     private double value;
     private String displayText;
-    private static final double EPSILON = 0.0000000001;
 
     public Solution() {
         this.value = 0;
@@ -80,9 +80,10 @@ public class Solution implements Comparable<Solution>  {
         runRationalRootTheorem(solutions, terms);
 
         // check and solve for quadratic
-        checkSolveQuadratic(solutions, terms);
-
-        // TODO: add real number solutions
+        if (terms.size() > 1 && !checkSolveQuadratic(solutions, terms)) {
+            // add real number solutions
+            checkFindRealRoots(solutions, terms);
+        }
 
         // return all the coefficients as a list
         Collections.sort(solutions);
@@ -145,12 +146,12 @@ public class Solution implements Comparable<Solution>  {
         for (Integer a : constantFactors) {
             for (Integer b : leadingCoefficientFactors) {
                 double pointValPositive = Polynomial.evaluateAtPoint((double)(a) / b, normalizedTerms);
-                if (Math.abs(pointValPositive) < EPSILON) {
+                if (NMathUtil.approximatelyEqualToZero(pointValPositive)) {
                     solutions.add(new Solution(a, b));
                     factorOut(a, b, normalizedTerms);
                 }
                 double pointValNegative = Polynomial.evaluateAtPoint((double)(-a) / b, normalizedTerms);
-                if (Math.abs(pointValNegative) < EPSILON) {
+                if (NMathUtil.approximatelyEqualToZero(pointValNegative)) {
                     solutions.add(new Solution(-a, b));
                     factorOut(-a, b, normalizedTerms);
                 }
@@ -189,7 +190,7 @@ public class Solution implements Comparable<Solution>  {
     // at this point, assume no rationals exists (and has such no linears)
     // MODIFIES: coefficients
     // EFFECTS: check for and solves quadratic/linear function
-    private static void checkSolveQuadratic(List<Solution> solutions, List<Term> normalizedTerms) {
+    private static boolean checkSolveQuadratic(List<Solution> solutions, List<Term> normalizedTerms) {
         int a = 0;
         int b = 0;
         int c = 0;
@@ -202,10 +203,11 @@ public class Solution implements Comparable<Solution>  {
             } else if (term.getDegree() == 2) {
                 a = term.getNumerator();
             } else {
-                return; // NOT a quadratic
+                return false; // NOT a quadratic
             }
         }
         checkSolveQuadratic(solutions, a, b, c);
+        return true;
     }
 
     // check for and solves quadratic function
@@ -232,4 +234,78 @@ public class Solution implements Comparable<Solution>  {
             }
         }
     }
+
+    private static void checkFindRealRoots(List<Solution> solutions, List<Term> normalizedTerms) {
+        checkBetweenZeroAndOne(solutions, normalizedTerms);
+        checkBetweenOneAndInfinity(solutions, normalizedTerms, true);
+        checkBetweenOneAndInfinity(solutions, normalizedTerms, false);
+    }
+
+    private static void checkBetweenZeroAndOne(List<Solution> solutions, List<Term> normalizedTerms) {
+        double point = -1;
+        double lastSolution = Polynomial.evaluateAtPoint(point, normalizedTerms);
+
+        // check for roots between -1 and 1
+        while (point < 1) {
+            point += DELTA;
+
+            double currentSolution = Polynomial.evaluateAtPoint(point, normalizedTerms);
+            if (NMathUtil.signsAreOpposites(lastSolution, currentSolution)) {
+                addSolutionFromRange(solutions, normalizedTerms, point - DELTA, point);
+            }
+            lastSolution = currentSolution;
+        }
+    }
+
+    private static void checkBetweenOneAndInfinity(List<Solution> solutions, List<Term> normalizedTerms, boolean isPositive) {
+        double point = isPositive ? 1 : -1;
+        Term greatestTerm = normalizedTerms.get(normalizedTerms.size() - 1);
+        double lastSolution = Polynomial.evaluateAtPoint(point, normalizedTerms) / greatestTerm.evaluateAtPoint(point);
+        double currentSolution;
+
+        // check for roots towards +infinity
+        // uses a cool trick where p(x) / leading term approaches 1 towards both infinities
+        // stop when value
+        int deltasSinceLastSignificantEvent = 0;
+        double lastDifference = 1; // placeholder
+        while (lastSolution < 0 || deltasSinceLastSignificantEvent < 1000000) {
+            point += (DELTA * (isPositive ? 1 : -1));
+            currentSolution = Polynomial.evaluateAtPoint(point, normalizedTerms) / greatestTerm.evaluateAtPoint(point);
+
+            if (NMathUtil.signsAreOpposites(lastSolution, currentSolution)) {
+                addSolutionFromRange(solutions, normalizedTerms, point - (DELTA * (isPositive ? 1 : -1)), point);
+                deltasSinceLastSignificantEvent = 0;
+            }
+
+            if (lastSolution > 0
+                    && Math.abs(lastDifference) > Math.abs(lastSolution - currentSolution)) {
+                deltasSinceLastSignificantEvent++;
+            } else {
+                deltasSinceLastSignificantEvent = 0;
+            }
+            lastDifference = lastSolution - currentSolution;
+            lastSolution = currentSolution;
+        }
+    }
+
+    // confirmed that there's one and exactly one solution within range
+    private static void addSolutionFromRange(List<Solution> solutions, List<Term> normalizedTerms, double left, double right) {
+        double leftValue = Polynomial.evaluateAtPoint(left, normalizedTerms);
+        double midPoint = (left + right) / 2;
+        double value = Polynomial.evaluateAtPoint(midPoint, normalizedTerms);
+
+        while (!NMathUtil.approximatelyEqualToZero(value)) {
+            if ((0 < value && value < leftValue) || (0 > value && value > leftValue)) {
+                left = midPoint;
+                leftValue = value;
+            } else {
+                right = midPoint;
+            }
+            midPoint = (left + right) / 2;
+            value = Polynomial.evaluateAtPoint(midPoint, normalizedTerms);
+        }
+
+        solutions.add(new Solution(midPoint));
+    }
+
 }
