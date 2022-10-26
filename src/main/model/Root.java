@@ -6,17 +6,27 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/*
+ * Represents the roots (aka solutions) of the polynomial at p(x) = 0
+ * Root objects aren't instantiated directly.
+ * Instead, the list of roots are provided for the provided polynomial.
+ */
 public class Root implements Comparable<Root>  {
     private static final double DELTA = 0.0001;
     private static final DecimalFormat ROUNDING_FORMAT = new DecimalFormat("0.000000");
+
     private double value;
     private String displayText;
 
+    // Constructs a root for x = 0
+    // EFFECTS: Constructs a root at zero
     public Root() {
         this.value = 0;
         displayText = "0";
     }
 
+    // Constructs a root from a real number (i.e. pi)
+    // EFFECTS: Constructs a root from a real number
     public Root(double value) {
         this.value = value;
 
@@ -24,12 +34,17 @@ public class Root implements Comparable<Root>  {
         displayText = ROUNDING_FORMAT.format(value);
     }
 
+    // Constructs a root from a rational/integer number
+    // REQUIRES: denominator != 0
+    // EFFECTS: Constructs a root from a rational/integer number
     public Root(int numerator, int denominator) {
         this.value = (double)(numerator) / denominator;
         displayText = numerator + (denominator > 1 ? "/" + denominator : "");
     }
 
-    // REQUIREMENT: rootedPart is positive
+    // Constructs a root from intermediary parameters provided by the quadratic equation
+    // REQUIRES: denominator != 0, rootedPart >= 0
+    // EFFECTS: Constructs a root from a rational/integer number
     public Root(int numerator, int denominator, int rootedPart, boolean isPositive) {
         // get value
         this.value = isPositive ? Math.sqrt(rootedPart) : -Math.sqrt(rootedPart);
@@ -40,7 +55,7 @@ public class Root implements Comparable<Root>  {
         int squaredRootedPart = NMathUtil.getLargestFactorableSquare(rootedPart);
         rootedPart /= squaredRootedPart * squaredRootedPart;
 
-        // simplify if needed
+        // simplify if possible
         int gcd = NMathUtil.getGCD(Math.abs(numerator), NMathUtil.getGCD(denominator, squaredRootedPart));
         numerator /= gcd;
         denominator /= gcd;
@@ -53,8 +68,8 @@ public class Root implements Comparable<Root>  {
         displayText +=  denominator > 1 ? "/" + denominator : "";
     }
 
-    // Gets the x intercepts of the function in parameter as a rational if possible
-    // EFFECTS: gets the x intercepts
+    // Gets the roots (aka solutions for p(x) = 0) of the function
+    // EFFECTS: Gets the roots
     public static List<Root> solveForPolynomial(Polynomial polynomial) {
         List<Root> roots = new ArrayList<>();
         List<Term> terms = polynomial.getTerms();
@@ -90,11 +105,15 @@ public class Root implements Comparable<Root>  {
         return roots;
     }
 
+    // Overriding toString() method of String class
+    // EFFECTS: Returns the string of the coefficient
     @Override
     public String toString() {
         return displayText;
     }
 
+    // Overriding compareTo() method of Comparable interface
+    // EFFECTS: Compares two roots with each other for sorting
     @Override
     public int compareTo(Root root) {
         return Double.compare(this.value, root.value);
@@ -129,11 +148,11 @@ public class Root implements Comparable<Root>  {
         }
     }
 
-    // check for and add rational coefficients based on the Rational Root Theorem
+    // checks for and adds rational coefficients based on the Rational Root Theorem
     // also, factors out the rational components found in the polynomial
-    // REQUIRES: normalized polynomial (denominators all equal 1)
-    // MODIFIES: coefficients, polynomial
-    // EFFECTS: check for and add rational coefficients
+    // REQUIRES: normalized terms (denominators are all 1)
+    // MODIFIES: roots, normalized terms
+    // EFFECTS: checks for and adds rational coefficients
     private static void runRationalRootTheorem(List<Root> roots, List<Term> normalizedTerms) {
         // get factors for leading coefficient and constant (both now an integer)
         int lastPos = normalizedTerms.size() - 1;
@@ -143,25 +162,25 @@ public class Root implements Comparable<Root>  {
         List<Integer> constantFactors = NMathUtil.getFactors(Math.abs(constant));
 
         // use epsilon and absolute value to account for rounding error
-        for (Integer a : constantFactors) {
-            for (Integer b : leadingCoefficientFactors) {
-                double pointValPositive = Polynomial.evaluateAtPoint((double)(a) / b, normalizedTerms);
+        for (Integer n : constantFactors) {
+            for (Integer d : leadingCoefficientFactors) {
+                double pointValPositive = Polynomial.evaluateAtPoint((double)(n) / d, normalizedTerms);
                 if (NMathUtil.approximatelyEqualToZero(pointValPositive)) {
-                    roots.add(new Root(a, b));
-                    factorOut(a, b, normalizedTerms);
+                    roots.add(new Root(n, d));
+                    factorOut(n, d, normalizedTerms);
                 }
-                double pointValNegative = Polynomial.evaluateAtPoint((double)(-a) / b, normalizedTerms);
+                double pointValNegative = Polynomial.evaluateAtPoint((double)(-n) / d, normalizedTerms);
                 if (NMathUtil.approximatelyEqualToZero(pointValNegative)) {
-                    roots.add(new Root(-a, b));
-                    factorOut(-a, b, normalizedTerms);
+                    roots.add(new Root(-n, d));
+                    factorOut(-n, d, normalizedTerms);
                 }
             }
         }
     }
 
-    // factors out rational solution from polynomial
-    // REQUIRES: polynomial that can be factored by the input
-    // MODIFIES: polynomial
+    // factors out rational solutions from polynomial
+    // REQUIRES: normalized terms that can be factored at least once by the input
+    // MODIFIES: normalized terms
     // EFFECTS: factors out rational solution from polynomial
     private static void factorOut(int n, int d, List<Term> normalizedTerms) {
         int size = normalizedTerms.size();
@@ -187,9 +206,10 @@ public class Root implements Comparable<Root>  {
     }
 
     // check for and solves quadratic function
-    // at this point, assume no rationals exists (and has such no linears)
-    // MODIFIES: coefficients
-    // EFFECTS: check for and solves quadratic/linear function
+    // at this point, assume no rationals exists (and has such aren't ax + b)
+    // MODIFIES: normalized terms
+    // REQUIRES: normalized term is not of form ax + b
+    // EFFECTS: check for and solves quadratic function
     private static boolean checkSolveQuadratic(List<Root> roots, List<Term> normalizedTerms) {
         int a = 0;
         int b = 0;
@@ -211,7 +231,7 @@ public class Root implements Comparable<Root>  {
     }
 
     // check for and solves quadratic function
-    // at this point, assume no rationals exists (and has such no linears)
+    // at this point, assume no rationals exists (and has such aren't ax + b)
     // MODIFIES: coefficients
     // REQUIRES: a != 0 (already guaranteed by caller function)
     // EFFECTS: check for and solves quadratic/linear functions
@@ -219,7 +239,7 @@ public class Root implements Comparable<Root>  {
         int denominator = 2 * a;
         int numerator = -b;
 
-        if (a < 0) {
+        if (denominator < 0) {
             numerator *= -1;
             denominator *= -1;
         }
@@ -234,12 +254,18 @@ public class Root implements Comparable<Root>  {
         }
     }
 
+    // check for and find real number roots
+    // MODIFIES: roots, normalized terms
+    // EFFECTS: check for and find real number roots
     private static void checkFindRealRoots(List<Root> roots, List<Term> normalizedTerms) {
         checkBetweenZeroAndOne(roots, normalizedTerms);
         checkBetweenOneAndInfinity(roots, normalizedTerms, true);
         checkBetweenOneAndInfinity(roots, normalizedTerms, false);
     }
 
+    // check for and find real number roots between -1 and +1
+    // MODIFIES: roots, normalized terms
+    // EFFECTS: check for and find real number roots between -1 and +1
     private static void checkBetweenZeroAndOne(List<Root> roots, List<Term> normalizedTerms) {
         double point = -1;
         double lastSolution = Polynomial.evaluateAtPoint(point, normalizedTerms);
@@ -256,6 +282,13 @@ public class Root implements Comparable<Root>  {
         }
     }
 
+    // check for and find real number roots between 1 and infinity, or -1 and -infinity.
+    // the code is able to do this in finite time by using evaluating on p(x) / ax^n,
+    // where ax^n is the greatest term in the polynomial p(x).
+    // both p(x) and p(x) / ax^n share the same roots, but as x approaches either ends of infinity,
+    // the evaluation for later approaches 1.
+    // MODIFIES: roots, normalized terms
+    // EFFECTS: check for and find real number roots between 1 and infinity, or -1 and -infinity.
     private static void checkBetweenOneAndInfinity(List<Root> roots,
                                                    List<Term> normalizedTerms,
                                                    boolean isPositive) {
@@ -289,7 +322,11 @@ public class Root implements Comparable<Root>  {
         }
     }
 
-    // confirmed that there's one and exactly one solution within range
+    // check for and find a real number root from a given range.
+    // uses intermediate value theorem and approximates the correct answer to 9 decimal places
+    // MODIFIES: roots, normalized terms
+    // REQUIRES: there's one and exactly one solution within the given range
+    // EFFECTS: check for and find a real number root from a given range
     private static void addSolutionFromRange(List<Root> roots,
                                              List<Term> normalizedTerms,
                                              double left, double right) {
