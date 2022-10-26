@@ -110,6 +110,9 @@ class PolynomialTest {
 
         Polynomial polynomial3 = new Polynomial("x^3 + 1/2x^2 + -x");
         assertEquals("[-1-sqrt(17)/4, 0, -1+sqrt(17)/4]", polynomial3.getXIntercepts().toString());
+
+        Polynomial polynomial4 = new Polynomial("x^2 + 5x - 1/2");
+        assertEquals("[-5-3sqrt(3)/2, -5+3sqrt(3)/2]", polynomial4.getXIntercepts().toString());
     }
 
     @Test

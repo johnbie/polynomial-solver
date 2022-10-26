@@ -213,25 +213,24 @@ public class Solution implements Comparable<Solution>  {
     // check for and solves quadratic function
     // at this point, assume no rationals exists (and has such no linears)
     // MODIFIES: coefficients
+    // REQUIRES: a != 0 (already guaranteed by caller function)
     // EFFECTS: check for and solves quadratic/linear functions
     private static void checkSolveQuadratic(List<Solution> solutions, int a, int b, int c) {
-        if (a != 0) {
-            int denominator = 2 * a;
-            int numerator = -b;
+        int denominator = 2 * a;
+        int numerator = -b;
 
-            if (denominator < 0) {
-                numerator *= -1;
-                denominator *= -1;
-            }
+        if (denominator < 0) {
+            numerator *= -1;
+            denominator *= -1;
+        }
 
-            // get and factor out squares
-            int rootedPart = (b * b) - (4 * a * c);
+        // get and factor out squares
+        int rootedPart = (b * b) - (4 * a * c);
 
-            // rational solutions were already factored out
-            if (rootedPart > 0) {
-                solutions.add(new Solution(numerator, denominator, rootedPart, false));
-                solutions.add(new Solution(numerator, denominator, rootedPart, true));
-            }
+        // rational solutions were already factored out
+        if (rootedPart > 0) {
+            solutions.add(new Solution(numerator, denominator, rootedPart, false));
+            solutions.add(new Solution(numerator, denominator, rootedPart, true));
         }
     }
 
@@ -270,7 +269,7 @@ public class Solution implements Comparable<Solution>  {
         // stop when value
         int deltasSinceLastSignificantEvent = 0;
         double lastDifference = 1; // placeholder
-        while (lastSolution < 0 || deltasSinceLastSignificantEvent < 1000000) {
+        while (lastSolution < 0 || deltasSinceLastSignificantEvent < 10000) {
             point += (DELTA * (isPositive ? 1 : -1));
             currentSolution = Polynomial.evaluateAtPoint(point, normalizedTerms) / greatestTerm.evaluateAtPoint(point);
 
@@ -280,8 +279,7 @@ public class Solution implements Comparable<Solution>  {
             }
 
             if (lastSolution > 0 && lastSolution < 2
-                    && Math.abs(lastDifference) < DELTA
-                    && Math.abs(lastDifference) > Math.abs(lastSolution - currentSolution)) {
+                    && Math.abs(lastDifference) < DELTA / 10) { // slope: m < 1/10
                 deltasSinceLastSignificantEvent++;
             } else {
                 deltasSinceLastSignificantEvent = 0;

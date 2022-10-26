@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 
 // the class for Json utilities
 // util file based on the JsonSerializationDemo project
-public class JsonUtil {
+public final class JsonUtil {
 
     // EFFECTS: reads json text file as json array
     public static JSONArray getArray(String source) throws IOException {

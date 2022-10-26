@@ -6,8 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class JsonUtilTest {
 
@@ -86,5 +85,12 @@ public class JsonUtilTest {
         } catch (IOException e) {
             fail("Exception should not have been thrown");
         }
+    }
+
+    // only needed for coverage; approved by TA
+    @Test
+    public void testStaticConstructor() {
+        JsonUtil jsonUtil = new JsonUtil();
+        assertNotNull(jsonUtil);
     }
 }
