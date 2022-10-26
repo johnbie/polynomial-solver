@@ -131,20 +131,20 @@ public class Polynomial {
 
     // Gets the x intercepts of the function as a rational if possible
     // EFFECTS: gets the x intercepts
-    public List<Solution> getXIntercepts() {
-        return Solution.solveForPolynomial(this);
+    public List<Root> getXIntercepts() {
+        return Root.solveForPolynomial(this);
     }
 
     // Gets the critical points of the function as a rational if possible
     // EFFECTS: gets the critical points
-    public List<Solution> getCriticalPoints() {
-        return Solution.solveForPolynomial(getDerivative());
+    public List<Root> getCriticalPoints() {
+        return Root.solveForPolynomial(getDerivative());
     }
 
     // Gets the inflection points of the function as a rational if possible
     // EFFECTS: gets the inflection points
-    public List<Solution> getInflectionPoints() {
-        return Solution.solveForPolynomial(getDerivative().getDerivative());
+    public List<Root> getInflectionPoints() {
+        return Root.solveForPolynomial(getDerivative().getDerivative());
     }
 
     // Overriding toString() method of String class

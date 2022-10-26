@@ -6,35 +6,35 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Solution implements Comparable<Solution>  {
+public class Root implements Comparable<Root>  {
     private static final double DELTA = 0.0001;
     private static final DecimalFormat ROUNDING_FORMAT = new DecimalFormat("0.000000");
     private double value;
     private String displayText;
 
-    public Solution() {
+    public Root() {
         this.value = 0;
         displayText = "0";
     }
 
-    public Solution(double value) {
+    public Root(double value) {
         this.value = value;
 
         ROUNDING_FORMAT.setRoundingMode(RoundingMode.HALF_UP);
         displayText = ROUNDING_FORMAT.format(value);
     }
 
-    public Solution(int numerator, int denominator) {
+    public Root(int numerator, int denominator) {
         this.value = (double)(numerator) / denominator;
         displayText = numerator + (denominator > 1 ? "/" + denominator : "");
     }
 
     // REQUIREMENT: rootedPart is positive
-    public Solution(int numerator, int denominator, int rootedPart, boolean isPositive) {
+    public Root(int numerator, int denominator, int rootedPart, boolean isPositive) {
         // get value
         this.value = isPositive ? Math.sqrt(rootedPart) : -Math.sqrt(rootedPart);
         this.value += numerator;
-        this.value /= 2 * denominator;
+        this.value /= denominator;
 
         // extract the square from rooted part (if exists)
         int squaredRootedPart = NMathUtil.getLargestFactorableSquare(rootedPart);
@@ -55,39 +55,39 @@ public class Solution implements Comparable<Solution>  {
 
     // Gets the x intercepts of the function in parameter as a rational if possible
     // EFFECTS: gets the x intercepts
-    public static List<Solution> solveForPolynomial(Polynomial polynomial) {
-        List<Solution> solutions = new ArrayList<>();
+    public static List<Root> solveForPolynomial(Polynomial polynomial) {
+        List<Root> roots = new ArrayList<>();
         List<Term> terms = polynomial.getTerms();
 
         int size = terms.size();
         if (size == 0) { // no more solutions
-            return solutions;
+            return roots;
         }
 
         // purpose: factor out x=0 from polynomial until constant exists
         // method: get the degree of last term; this is the number of x=0
         int numberOfZeroIntercepts = terms.get(0).getDegree();
         if (numberOfZeroIntercepts > 0) {
-            solutions.add(new Solution());
+            roots.add(new Root());
         }
 
         // no more solutions because the remaining "factor" is a constant
         if (size == 1) {
-            return solutions;
+            return roots;
         }
 
         normalizeTerms(terms, getLcmForDenominators(terms), numberOfZeroIntercepts);
-        runRationalRootTheorem(solutions, terms);
+        runRationalRootTheorem(roots, terms);
 
         // check and solve for quadratic
-        if (terms.size() > 1 && !checkSolveQuadratic(solutions, terms)) {
+        if (terms.size() > 1 && !checkSolveQuadratic(roots, terms)) {
             // add real number solutions
-            checkFindRealRoots(solutions, terms);
+            checkFindRealRoots(roots, terms);
         }
 
         // return all the coefficients as a list
-        Collections.sort(solutions);
-        return solutions;
+        Collections.sort(roots);
+        return roots;
     }
 
     @Override
@@ -96,8 +96,8 @@ public class Solution implements Comparable<Solution>  {
     }
 
     @Override
-    public int compareTo(Solution solution) {
-        return Double.compare(this.value, solution.value);
+    public int compareTo(Root root) {
+        return Double.compare(this.value, root.value);
     }
 
     // Gets the lowest common multiple of the denominator
@@ -134,7 +134,7 @@ public class Solution implements Comparable<Solution>  {
     // REQUIRES: normalized polynomial (denominators all equal 1)
     // MODIFIES: coefficients, polynomial
     // EFFECTS: check for and add rational coefficients
-    private static void runRationalRootTheorem(List<Solution> solutions, List<Term> normalizedTerms) {
+    private static void runRationalRootTheorem(List<Root> roots, List<Term> normalizedTerms) {
         // get factors for leading coefficient and constant (both now an integer)
         int lastPos = normalizedTerms.size() - 1;
         int leadingCoefficient = normalizedTerms.get(lastPos).getNumerator();
@@ -147,12 +147,12 @@ public class Solution implements Comparable<Solution>  {
             for (Integer b : leadingCoefficientFactors) {
                 double pointValPositive = Polynomial.evaluateAtPoint((double)(a) / b, normalizedTerms);
                 if (NMathUtil.approximatelyEqualToZero(pointValPositive)) {
-                    solutions.add(new Solution(a, b));
+                    roots.add(new Root(a, b));
                     factorOut(a, b, normalizedTerms);
                 }
                 double pointValNegative = Polynomial.evaluateAtPoint((double)(-a) / b, normalizedTerms);
                 if (NMathUtil.approximatelyEqualToZero(pointValNegative)) {
-                    solutions.add(new Solution(-a, b));
+                    roots.add(new Root(-a, b));
                     factorOut(-a, b, normalizedTerms);
                 }
             }
@@ -190,7 +190,7 @@ public class Solution implements Comparable<Solution>  {
     // at this point, assume no rationals exists (and has such no linears)
     // MODIFIES: coefficients
     // EFFECTS: check for and solves quadratic/linear function
-    private static boolean checkSolveQuadratic(List<Solution> solutions, List<Term> normalizedTerms) {
+    private static boolean checkSolveQuadratic(List<Root> roots, List<Term> normalizedTerms) {
         int a = 0;
         int b = 0;
         int c = 0;
@@ -206,7 +206,7 @@ public class Solution implements Comparable<Solution>  {
                 return false; // NOT a quadratic
             }
         }
-        checkSolveQuadratic(solutions, a, b, c);
+        checkSolveQuadratic(roots, a, b, c);
         return true;
     }
 
@@ -215,11 +215,11 @@ public class Solution implements Comparable<Solution>  {
     // MODIFIES: coefficients
     // REQUIRES: a != 0 (already guaranteed by caller function)
     // EFFECTS: check for and solves quadratic/linear functions
-    private static void checkSolveQuadratic(List<Solution> solutions, int a, int b, int c) {
+    private static void checkSolveQuadratic(List<Root> roots, int a, int b, int c) {
         int denominator = 2 * a;
         int numerator = -b;
 
-        if (denominator < 0) {
+        if (a < 0) {
             numerator *= -1;
             denominator *= -1;
         }
@@ -229,18 +229,18 @@ public class Solution implements Comparable<Solution>  {
 
         // rational solutions were already factored out
         if (rootedPart > 0) {
-            solutions.add(new Solution(numerator, denominator, rootedPart, false));
-            solutions.add(new Solution(numerator, denominator, rootedPart, true));
+            roots.add(new Root(numerator, denominator, rootedPart, false));
+            roots.add(new Root(numerator, denominator, rootedPart, true));
         }
     }
 
-    private static void checkFindRealRoots(List<Solution> solutions, List<Term> normalizedTerms) {
-        checkBetweenZeroAndOne(solutions, normalizedTerms);
-        checkBetweenOneAndInfinity(solutions, normalizedTerms, true);
-        checkBetweenOneAndInfinity(solutions, normalizedTerms, false);
+    private static void checkFindRealRoots(List<Root> roots, List<Term> normalizedTerms) {
+        checkBetweenZeroAndOne(roots, normalizedTerms);
+        checkBetweenOneAndInfinity(roots, normalizedTerms, true);
+        checkBetweenOneAndInfinity(roots, normalizedTerms, false);
     }
 
-    private static void checkBetweenZeroAndOne(List<Solution> solutions, List<Term> normalizedTerms) {
+    private static void checkBetweenZeroAndOne(List<Root> roots, List<Term> normalizedTerms) {
         double point = -1;
         double lastSolution = Polynomial.evaluateAtPoint(point, normalizedTerms);
 
@@ -250,13 +250,13 @@ public class Solution implements Comparable<Solution>  {
 
             double currentSolution = Polynomial.evaluateAtPoint(point, normalizedTerms);
             if (NMathUtil.signsAreOpposites(lastSolution, currentSolution)) {
-                addSolutionFromRange(solutions, normalizedTerms, point - DELTA, point);
+                addSolutionFromRange(roots, normalizedTerms, point - DELTA, point);
             }
             lastSolution = currentSolution;
         }
     }
 
-    private static void checkBetweenOneAndInfinity(List<Solution> solutions,
+    private static void checkBetweenOneAndInfinity(List<Root> roots,
                                                    List<Term> normalizedTerms,
                                                    boolean isPositive) {
         double point = isPositive ? 1 : -1;
@@ -274,7 +274,7 @@ public class Solution implements Comparable<Solution>  {
             currentSolution = Polynomial.evaluateAtPoint(point, normalizedTerms) / greatestTerm.evaluateAtPoint(point);
 
             if (NMathUtil.signsAreOpposites(lastSolution, currentSolution)) {
-                addSolutionFromRange(solutions, normalizedTerms, point - (DELTA * (isPositive ? 1 : -1)), point);
+                addSolutionFromRange(roots, normalizedTerms, point - (DELTA * (isPositive ? 1 : -1)), point);
                 deltasSinceLastSignificantEvent = 0;
             }
 
@@ -290,7 +290,7 @@ public class Solution implements Comparable<Solution>  {
     }
 
     // confirmed that there's one and exactly one solution within range
-    private static void addSolutionFromRange(List<Solution> solutions,
+    private static void addSolutionFromRange(List<Root> roots,
                                              List<Term> normalizedTerms,
                                              double left, double right) {
         double leftValue = Polynomial.evaluateAtPoint(left, normalizedTerms);
@@ -308,7 +308,7 @@ public class Solution implements Comparable<Solution>  {
             value = Polynomial.evaluateAtPoint(midPoint, normalizedTerms);
         }
 
-        solutions.add(new Solution(midPoint));
+        roots.add(new Root(midPoint));
     }
 
 }
