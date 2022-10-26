@@ -11,19 +11,22 @@ import java.io.IOException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+/*
+ * The class for starting the polynomial terminal app.
+ */
 public class PolynomialTerminalApp {
     private Polynomial polynomial;
     private Scanner input;
     private static final String polynomialFilePath = "./data/polynomials.json";
 
+    // EFFECTS: constructor; initializes and starts the polynomial terminal app
     public PolynomialTerminalApp() {
         init();
         run();
     }
 
-    // initializes variables for polynomial terminal app
     // MODIFIES: this
-    // EFFECTS: initializes variables
+    // EFFECTS: initializes variables for polynomial terminal app
     private void init() {
         polynomial = new Polynomial();
         File polynomialsFile = new File(polynomialFilePath);
@@ -35,9 +38,8 @@ public class PolynomialTerminalApp {
         input.useDelimiter("\n");
     }
 
-    // runs the polynomial terminal app; runs till user quits (q)
     // MODIFIES: this
-    // EFFECTS: runs the app
+    // EFFECTS: runs the polynomial terminal app
     private void run() {
         boolean keepGoing = true;
         String command;
@@ -60,7 +62,6 @@ public class PolynomialTerminalApp {
         System.out.println("\nGoodbye!");
     }
 
-    // displays options
     // EFFECTS: displays menu of options to user
     private void displayOptions() {
         System.out.println("\nSelect from:");
@@ -75,7 +76,6 @@ public class PolynomialTerminalApp {
         System.out.println("\tq -> quit");
     }
 
-    // processes user command from string input
     // MODIFIES: this
     // EFFECTS: processes user command
     private void processCommand(String command) {
@@ -100,29 +100,25 @@ public class PolynomialTerminalApp {
         }
     }
 
-    // sets polynomial from user input
     // MODIFIES: this
     // EFFECTS: sets polynomial from user input
     private void setPolynomialFromInput() {
         polynomial = createPolynomialFromInput();
     }
 
-    // add term from user input
     // MODIFIES: this
     // EFFECTS: add term from user input
     private void addPolynomialFromInput() {
         polynomial.addTerm(createTermFromInput());
     }
 
-    // resets polynomial to f(x) = 0
     // MODIFIES: this
-    // EFFECTS: resets polynomial
+    // EFFECTS: resets polynomial to f(x) = 0
     private void resetPolynomial() {
         polynomial = new Polynomial();
         System.out.println("\nReset polynomial.");
     }
 
-    // evaluates function at point
     // EFFECTS: evaluates function at point
     private void evaluateAtPoint() {
         System.out.println("\nFill in a decimal value x to evaluate polynomial at: ");
@@ -138,7 +134,6 @@ public class PolynomialTerminalApp {
         }
     }
 
-    // gets summary of the polynomial
     // EFFECTS: gets summary of the polynomial
     private void getSummary() {
         System.out.println("\nSummary for " + polynomial + ": ");
@@ -149,7 +144,7 @@ public class PolynomialTerminalApp {
         System.out.println("\tderivative: " + polynomial.getDerivative());
     }
 
-    // prompts user to fill in a valid polynomial and return it
+    // MODIFIES: this
     // EFFECTS: prompts user to fill in a valid polynomial and return it
     private Polynomial createPolynomialFromInput() {
         System.out.println("\nFill in polynomial in text form (i.e. x^3 + 1/2x^2 + -x): ");
@@ -165,7 +160,7 @@ public class PolynomialTerminalApp {
         }
     }
 
-    // prompts user to fill in a valid term and return it
+    // MODIFIES: this
     // EFFECTS: prompts user to fill in a valid term and return it
     private Term createTermFromInput() {
         System.out.println("\nAdd a valid term text form (i.e. x^3, 1/2x^2, -x): ");
@@ -181,7 +176,6 @@ public class PolynomialTerminalApp {
         }
     }
 
-    // generates sample polynomials and writes them to file
     // MODIFIES: polynomials.json
     // EFFECTS: generates sample polynomials and writes them to file
     private void savePolynomial() {
@@ -197,6 +191,8 @@ public class PolynomialTerminalApp {
         }
     }
 
+    // MODIFIES: this, polynomials.json
+    // EFFECTS: loads polynomial from file, which can then be updated
     private void loadPolynomial() {
         try {
             JSONArray polynomials = JsonUtil.getArray(polynomialFilePath);
@@ -225,6 +221,7 @@ public class PolynomialTerminalApp {
         }
     }
 
+    // EFFECTS: displays menu of options to user for polynomial load mode
     private void displayLoadOptions() {
         System.out.println("\nSelect from:");
         System.out.println("\th -> get list of commands");
@@ -236,6 +233,8 @@ public class PolynomialTerminalApp {
         System.out.println("\te -> exit back to main");
     }
 
+    // MODIFIES: this, polynomials.json
+    // EFFECTS: processes commands for polynomial load mode
     private JSONArray processLoadCommands(String command, JSONArray polynomials) {
         if (command.equals("h")) {
             displayLoadOptions();
@@ -254,6 +253,8 @@ public class PolynomialTerminalApp {
         return polynomials;
     }
 
+    // MODIFIES: polynomials.json
+    // EFFECTS: adds polynomial to list
     private JSONArray addPolynomialToList(JSONArray polynomials) {
         System.out.println("\nFill in a polynomial to add: ");
         while (true) {
@@ -269,6 +270,8 @@ public class PolynomialTerminalApp {
         }
     }
 
+    // MODIFIES: polynomials.json
+    // EFFECTS: deletes polynomial from list
     private JSONArray deletePolynomialFromList(JSONArray polynomials) {
         System.out.println("\nDelete at index: ");
         while (true) {
@@ -286,6 +289,8 @@ public class PolynomialTerminalApp {
         }
     }
 
+    // MODIFIES: this
+    // EFFECTS: sets current polynomial to one in list
     private void setToPolynomialFromList(JSONArray polynomials) {
         System.out.println("\nSelect at index: ");
         while (true) {
@@ -303,6 +308,7 @@ public class PolynomialTerminalApp {
         }
     }
 
+    // EFFECTS: lists out polynomials in file
     private void listPolynomials(JSONArray polynomials) {
         System.out.println("\nPolynomials List:");
         polynomials.length();
@@ -311,6 +317,7 @@ public class PolynomialTerminalApp {
         }
     }
 
+    // EFFECTS: generates sample polynomials as json array
     private JSONArray generateSampleData() {
         JSONArray samplePolynomials = new JSONArray();
         samplePolynomials.put("x^2");
@@ -320,7 +327,6 @@ public class PolynomialTerminalApp {
         return samplePolynomials;
     }
 
-    // generates sample polynomials and writes them to file
     // MODIFIES: polynomials.json
     // EFFECTS: generates sample polynomials and writes them to file
     private void generateSampleDataToFile() {
