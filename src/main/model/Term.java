@@ -159,10 +159,12 @@ public class Term {
         String rational = numerator + "";
         if (denominator > 1) {
             rational += "/" + denominator;
-        } else if (numerator == -1 && degree > 0) {
-            rational = "-";
-        } else if (numerator == 1 && degree > 0) {
-            rational = "";
+        } else if (degree > 0) {
+            if (numerator == -1) {
+                rational = "-";
+            } else if (numerator == 1) {
+                rational = "";
+            }
         }
 
         if (degree == 0) {

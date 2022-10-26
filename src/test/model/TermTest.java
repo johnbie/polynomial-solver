@@ -163,11 +163,17 @@ class TermTest {
 
     @Test
     public void testGetAbs() {
-        Term term = new Term(-1, 2, 3);
-        Term abs = term.getAbs();
-        assertEquals(1, abs.getNumerator());
-        assertEquals(2, abs.getDenominator());
-        assertEquals(3, abs.getDegree());
+        Term term1 = new Term(1, 2, 3);
+        Term abs1 = term1.getAbs();
+        assertEquals(1, abs1.getNumerator());
+        assertEquals(2, abs1.getDenominator());
+        assertEquals(3, abs1.getDegree());
+
+        Term term2 = new Term(-1, 2, 3);
+        Term abs2 = term2.getAbs();
+        assertEquals(1, abs2.getNumerator());
+        assertEquals(2, abs2.getDenominator());
+        assertEquals(3, abs2.getDegree());
     }
 
     @Test
