@@ -203,6 +203,12 @@ public class Root implements Comparable<Root>  {
                 newDegree--;
             }
         }
+
+        // recursive; factor out completely
+        double pointValPositive = Polynomial.evaluateAtPoint((double)(n) / d, normalizedTerms);
+        if (NMathUtil.approximatelyEqualToZero(pointValPositive)) {
+            factorOut(n, d, normalizedTerms);
+        }
     }
 
     // check for and solves quadratic function

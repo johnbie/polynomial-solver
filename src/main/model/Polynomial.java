@@ -31,7 +31,7 @@ public class Polynomial {
                 String operator = polynomialStr.substring(0,3);
                 if (Objects.equals(operator, " + ")) {
                     polynomialStr = polynomialStr.substring(3);
-                } else if (Objects.equals(operator, " - ")) {
+                } else { // if (Objects.equals(operator, " - "))
                     polynomialStr = "-" + polynomialStr.substring(3);
                 }
             } else {

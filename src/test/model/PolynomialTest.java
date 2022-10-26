@@ -15,6 +15,7 @@ class PolynomialTest {
         Polynomial polynomial = new Polynomial("x^2 + 7/15x - 4/15");
         assertEquals("x^2 + 7/15x - 4/15", polynomial.toString());
     }
+
     @Test
     public void testAddTerm() {
         Polynomial polynomial = new Polynomial();
@@ -89,6 +90,9 @@ class PolynomialTest {
 
         Polynomial polynomial2 = new Polynomial("x^4 + -x^3 + x + -1");
         assertEquals("[-1, 1]", polynomial2.getXIntercepts().toString());
+
+        Polynomial polynomial3 = new Polynomial("x^3 + x^2 - x - 1");
+        assertEquals("[-1, 1]", polynomial3.getXIntercepts().toString());
     }
 
     @Test
