@@ -71,7 +71,7 @@ public class Root implements Comparable<Root>  {
         this.value += numerator;
         this.value /= denominator;
 
-        if (numerator != 0 && rootedPart != 0 && denominator > 1) {
+        if (numerator != 0 || rootedPart != 0) {
             // extract the square from rooted part (if exists)
             int squaredRootedPart = NMathUtil.getLargestFactorableSquare(rootedPart);
             rootedPart /= squaredRootedPart * squaredRootedPart;
@@ -82,11 +82,11 @@ public class Root implements Comparable<Root>  {
             denominator /= gcd;
             squaredRootedPart /= gcd;
 
-            // get the display value
-            displayText = numerator + (isPositive ? "+" : "-");
-            displayText += squaredRootedPart > 1 ? squaredRootedPart : "";
-            displayText += "sqrt(" + rootedPart + ")";
-            displayText +=  denominator > 1 ? "/" + denominator : "";
+            this.displayText = numerator != 0 ? numerator + "" : "";
+            this.displayText += numerator != 0 && rootedPart != 0 ? (isPositive ? "+" : "-") : "";
+            this.displayText += squaredRootedPart > 1 ? squaredRootedPart : "";
+            this.displayText += rootedPart != 0 ? "sqrt(" + rootedPart + ")" : "";
+            this.displayText += denominator > 1 ? "/" + denominator : "";
         } else {
             this.displayText = numerator + "";
         }

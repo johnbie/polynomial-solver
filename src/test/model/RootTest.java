@@ -49,4 +49,15 @@ class RootTest {
         assertEquals(0.2905694150420949, negative3.getValue());
         assertEquals("-2+sqrt(10)/4", negative3.getDisplayText());
     }
+
+    @Test
+    public void testQuadraticRoots() {
+        Root root1 = new Root(1, 1, 0, true);
+        assertEquals(1, root1.getValue());
+        assertEquals("1", root1.getDisplayText());
+
+        Root root2 = new Root(0, 1, 2, true);
+        assertEquals(1.4142135623730951, root2.getValue());
+        assertEquals("sqrt(2)", root2.getDisplayText());
+    }
 }
