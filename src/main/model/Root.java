@@ -82,12 +82,13 @@ public class Root implements Comparable<Root>  {
             denominator /= gcd;
             squaredRootedPart /= gcd;
 
-            this.displayText = numerator != 0 ? numerator + "" : "";
-            this.displayText += numerator != 0 && rootedPart != 0 ? (isPositive ? "+" : "-") : "";
-            this.displayText += squaredRootedPart > 1 ? squaredRootedPart : "";
-            this.displayText += rootedPart != 0 ? "sqrt(" + rootedPart + ")" : "";
-            this.displayText += denominator > 1 ? "/" + denominator : "";
+            this.displayText = numerator != 0 ? numerator + "" : ""; // numerator
+            this.displayText += numerator != 0 && rootedPart != 0 ? (isPositive ? "+" : "-") : ""; // sign
+            this.displayText += squaredRootedPart > 1 ? squaredRootedPart : ""; // factored part of sqrt
+            this.displayText += rootedPart != 0 ? "sqrt(" + rootedPart + ")" : ""; // sqrt part
+            this.displayText += denominator > 1 ? "/" + denominator : ""; // denominator
         } else {
+            // zero
             this.displayText = numerator + "";
         }
     }
