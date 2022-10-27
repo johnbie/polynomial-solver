@@ -22,7 +22,7 @@ public class Root implements Comparable<Root>  {
     // EFFECTS: Constructs a root at zero
     public Root() {
         this.value = 0;
-        displayText = "0";
+        this.displayText = "0";
     }
 
     // Constructs a root from a real number (i.e. pi)
@@ -31,41 +31,87 @@ public class Root implements Comparable<Root>  {
         this.value = value;
 
         ROUNDING_FORMAT.setRoundingMode(RoundingMode.HALF_UP);
-        displayText = ROUNDING_FORMAT.format(value);
+        this.displayText = ROUNDING_FORMAT.format(value);
     }
 
     // Constructs a root from a rational/integer number
     // REQUIRES: denominator != 0
     // EFFECTS: Constructs a root from a rational/integer number
     public Root(int numerator, int denominator) {
+        if (denominator < 0) {
+            numerator *= -1;
+            denominator *= -1;
+        }
+
         this.value = (double)(numerator) / denominator;
-        displayText = numerator + (denominator > 1 ? "/" + denominator : "");
+
+        // simplify if possible
+        int gcd = NMathUtil.getGCD(Math.abs(numerator), denominator);
+        numerator /= gcd;
+        denominator /= gcd;
+
+        if (numerator != 0 && denominator > 1) {
+            this.displayText = numerator + "/" + denominator;
+        } else {
+            this.displayText = numerator + "";
+        }
     }
 
     // Constructs a root from intermediary parameters provided by the quadratic equation
     // REQUIRES: denominator != 0, rootedPart >= 0
     // EFFECTS: Constructs a root from a rational/integer number
     public Root(int numerator, int denominator, int rootedPart, boolean isPositive) {
+        if (denominator < 0) {
+            numerator *= -1;
+            denominator *= -1;
+        }
+
         // get value
         this.value = isPositive ? Math.sqrt(rootedPart) : -Math.sqrt(rootedPart);
         this.value += numerator;
         this.value /= denominator;
 
-        // extract the square from rooted part (if exists)
-        int squaredRootedPart = NMathUtil.getLargestFactorableSquare(rootedPart);
-        rootedPart /= squaredRootedPart * squaredRootedPart;
+        if (numerator != 0 && rootedPart != 0 && denominator > 1) {
+            // extract the square from rooted part (if exists)
+            int squaredRootedPart = NMathUtil.getLargestFactorableSquare(rootedPart);
+            rootedPart /= squaredRootedPart * squaredRootedPart;
 
-        // simplify if possible
-        int gcd = NMathUtil.getGCD(Math.abs(numerator), NMathUtil.getGCD(denominator, squaredRootedPart));
-        numerator /= gcd;
-        denominator /= gcd;
-        squaredRootedPart /= gcd;
+            // simplify if possible
+            int gcd = NMathUtil.getGCD(Math.abs(numerator), NMathUtil.getGCD(denominator, squaredRootedPart));
+            numerator /= gcd;
+            denominator /= gcd;
+            squaredRootedPart /= gcd;
 
-        // get the display value
-        displayText = numerator + (isPositive ? "+" : "-");
-        displayText += squaredRootedPart > 1 ? squaredRootedPart : "";
-        displayText += "sqrt(" + rootedPart + ")";
-        displayText +=  denominator > 1 ? "/" + denominator : "";
+            // get the display value
+            displayText = numerator + (isPositive ? "+" : "-");
+            displayText += squaredRootedPart > 1 ? squaredRootedPart : "";
+            displayText += "sqrt(" + rootedPart + ")";
+            displayText +=  denominator > 1 ? "/" + denominator : "";
+        } else {
+            this.displayText = numerator + "";
+        }
+    }
+
+    public double getValue() {
+        return this.value;
+    }
+
+    public String getDisplayText() {
+        return this.displayText;
+    }
+
+    // Overriding toString() method of String class
+    // EFFECTS: Returns the string of the coefficient
+    @Override
+    public String toString() {
+        return displayText;
+    }
+
+    // Overriding compareTo() method of Comparable interface
+    // EFFECTS: Compares two roots with each other for sorting
+    @Override
+    public int compareTo(Root root) {
+        return Double.compare(this.value, root.value);
     }
 
     // Gets the roots (aka solutions for p(x) = 0) of the function
@@ -103,20 +149,6 @@ public class Root implements Comparable<Root>  {
         // return all the coefficients as a list
         Collections.sort(roots);
         return roots;
-    }
-
-    // Overriding toString() method of String class
-    // EFFECTS: Returns the string of the coefficient
-    @Override
-    public String toString() {
-        return displayText;
-    }
-
-    // Overriding compareTo() method of Comparable interface
-    // EFFECTS: Compares two roots with each other for sorting
-    @Override
-    public int compareTo(Root root) {
-        return Double.compare(this.value, root.value);
     }
 
     // Gets the lowest common multiple of the denominator
@@ -244,11 +276,6 @@ public class Root implements Comparable<Root>  {
     private static void checkSolveQuadratic(List<Root> roots, int a, int b, int c) {
         int denominator = 2 * a;
         int numerator = -b;
-
-        if (denominator < 0) {
-            numerator *= -1;
-            denominator *= -1;
-        }
 
         // get and factor out squares
         int rootedPart = (b * b) - (4 * a * c);
