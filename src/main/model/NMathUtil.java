@@ -7,7 +7,6 @@ import java.util.List;
  * The math utility class for natural numbers N
  */
 public final class NMathUtil {
-    private static final double EPSILON = 0.0000000001;
 
     // Returns the factors for a positive integer (i.e. 6 has factors of [1,2,3,6]
     // REQUIRES: positive integer (a >= 0)
@@ -68,15 +67,5 @@ public final class NMathUtil {
             }
         }
         return a;
-    }
-
-    // EFFECT: returns whether double a is approximately equal to 0
-    public static boolean approximatelyEqualToZero(double a) {
-        return EPSILON >= a && -EPSILON <= a;
-    }
-
-    // EFFECT: returns whether the two doubles have different signs (+, -)
-    public static boolean signsAreOpposites(double a, double b) {
-        return (a > 0 && b < 0) || (a < 0 && b > 0);
     }
 }

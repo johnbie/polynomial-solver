@@ -198,12 +198,12 @@ public class Root implements Comparable<Root>  {
         for (Integer n : constantFactors) {
             for (Integer d : leadingCoefficientFactors) {
                 double pointValPositive = Polynomial.evaluateAtPoint((double)(n) / d, normalizedTerms);
-                if (NMathUtil.approximatelyEqualToZero(pointValPositive)) {
+                if (RMathUtil.approximatelyEqualToZero(pointValPositive)) {
                     roots.add(new Root(n, d));
                     factorOut(n, d, normalizedTerms);
                 }
                 double pointValNegative = Polynomial.evaluateAtPoint((double)(-n) / d, normalizedTerms);
-                if (NMathUtil.approximatelyEqualToZero(pointValNegative)) {
+                if (RMathUtil.approximatelyEqualToZero(pointValNegative)) {
                     roots.add(new Root(-n, d));
                     factorOut(-n, d, normalizedTerms);
                 }
@@ -239,7 +239,7 @@ public class Root implements Comparable<Root>  {
 
         // recursive; factor out completely
         double pointValPositive = Polynomial.evaluateAtPoint((double)(n) / d, normalizedTerms);
-        if (NMathUtil.approximatelyEqualToZero(pointValPositive)) {
+        if (RMathUtil.approximatelyEqualToZero(pointValPositive)) {
             factorOut(n, d, normalizedTerms);
         }
     }
@@ -309,7 +309,7 @@ public class Root implements Comparable<Root>  {
             point += DELTA;
 
             double currentSolution = Polynomial.evaluateAtPoint(point, normalizedTerms);
-            if (NMathUtil.signsAreOpposites(lastSolution, currentSolution)) {
+            if (RMathUtil.signsAreOpposites(lastSolution, currentSolution)) {
                 addSolutionFromRange(roots, normalizedTerms, point - DELTA, point);
             }
             lastSolution = currentSolution;
@@ -340,7 +340,7 @@ public class Root implements Comparable<Root>  {
             point += (DELTA * (isPositive ? 1 : -1));
             currentSolution = Polynomial.evaluateAtPoint(point, normalizedTerms) / greatestTerm.evaluateAtPoint(point);
 
-            if (NMathUtil.signsAreOpposites(lastSolution, currentSolution)) {
+            if (RMathUtil.signsAreOpposites(lastSolution, currentSolution)) {
                 addSolutionFromRange(roots, normalizedTerms, point - (DELTA * (isPositive ? 1 : -1)), point);
                 deltasSinceLastSignificantEvent = 0;
             }
@@ -368,7 +368,7 @@ public class Root implements Comparable<Root>  {
         double midPoint = (left + right) / 2;
         double value = Polynomial.evaluateAtPoint(midPoint, normalizedTerms);
 
-        while (!NMathUtil.approximatelyEqualToZero(value)) {
+        while (!RMathUtil.approximatelyEqualToZero(value)) {
             if ((0 < value && value < leftValue) || (0 > value && value > leftValue)) {
                 left = midPoint;
                 leftValue = value;
