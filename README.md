@@ -17,9 +17,6 @@ List of traits summarized:
  - The y intercept
  - List of critical points (minimums, maximums, and neither)
  - List of inflection points
- - Range of increasing, decreasing, and constant regions
- - Range of concave up, concave down, and non-concave regions
- - Sign as x approaches positive and negative infinity
 
 
 There are other features that the users can enjoy, though mostly from the command line.

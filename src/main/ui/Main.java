@@ -6,6 +6,7 @@ package ui;
 public class Main {
     // EFFECTS: starts app
     public static void main(String[] args) {
-        new PolynomialTerminalApp();
+        new PolynomialGuiApp();
+        //new PolynomialTerminalApp();
     }
 }
