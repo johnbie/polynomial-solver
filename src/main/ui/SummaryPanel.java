@@ -4,27 +4,27 @@ import model.Polynomial;
 
 import javax.swing.*;
 
+/*
+ * The class for showing the polynomial summary to user.
+ */
 public class SummaryPanel extends JPanel {
-    private Polynomial polynomial;
     private JTextArea summary;
 
+    // EFFECTS: constructor; initializes and shows polynomial summary
     public SummaryPanel(Polynomial polynomial) {
-        this.polynomial = polynomial;
-
+        // set summary
         summary = new JTextArea(30, 15);
-        summary.setText(getSummary());
-        JScrollPane scrollPane = new JScrollPane(summary);
+        summary.setText(getSummary(polynomial));
         summary.setEditable(false);
         add(summary);
     }
 
     public void update(Polynomial polynomial) {
-        this.polynomial = polynomial;
-        summary.setText(getSummary());
+        summary.setText(getSummary(polynomial));
         repaint();
     }
 
-    private String getSummary() {
+    private String getSummary(Polynomial polynomial) {
         String summary = "\nSummary for " + polynomial + ": " + "\n";
         summary += " - x-intercepts: " + polynomial.getXIntercepts() + "\n";
         summary += " - y-intercept: " + polynomial.getYIntercept() + "\n";

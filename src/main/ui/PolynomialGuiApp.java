@@ -6,8 +6,7 @@ import model.Term;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.File;
 
 /*
  * The class for starting the polynomial gui app.
@@ -18,58 +17,75 @@ public class PolynomialGuiApp extends JFrame {
 
     private Polynomial polynomial;
     private static final String polynomialFilePath = "./data/polynomials.json";
-    private List<Shape> shapes;
     private GraphicsPanel graphicsPanel;
     private SummaryPanel summaryPanel;
 
+    // EFFECTS: constructor; initializes and starts the polynomial gui app
     public PolynomialGuiApp() {
         super("Polynomial Root Calculator");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setUndecorated(false);
-
-        setTitle("CPSC 210: Alarm System Simulator");
-        setSize(WIDTH, HEIGHT);
-
-        shapes = new ArrayList<>();
-        setBackground(Color.white);
-
         init();
         run();
     }
 
-    public void init() {
-        polynomial = new Polynomial("x^2");
+    // MODIFIES: this
+    // EFFECTS: initializes polynomial gui app
+    private void init() {
+        initPolynomial();
+        initFrame();
+        initUI();
+    }
 
-        centreOnScreen();
 
+    // MODIFIES: this
+    // EFFECTS: runs the polynomial gui app
+    private void run() {
+        ;
+    }
+
+    // MODIFIES: this, file storage
+    // EFFECTS: initializes the polynomial and polynomial file (if not exists)
+    private void initPolynomial() {
+        polynomial = new Polynomial("0");
+        File polynomialsFile = new File(polynomialFilePath);
+        //if (!polynomialsFile.exists()) {
+        //    generateSampleDataToFile();
+        //}
+    }
+
+    // MODIFIES: this
+    // EFFECTS: initializes the application's frame
+    private void initFrame() {
+        // main settings
+        setTitle("CPSC 210: Alarm System Simulator");
+        setSize(WIDTH, HEIGHT);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        // misc settings
+        setBackground(Color.white);
+        setUndecorated(false);
+
+        // center on screen
+        Dimension scrn = Toolkit.getDefaultToolkit().getScreenSize();
+        setLocation((scrn.width - getWidth()) / 2, (scrn.height - getHeight()) / 2);
+    }
+
+    // MODIFIES: this
+    // EFFECTS: initializes the application's ui elements,
+    // such as summary and graph
+    private void initUI() {
         summaryPanel = new SummaryPanel(this.polynomial);
         add(summaryPanel, BorderLayout.EAST);
 
         graphicsPanel = new GraphicsPanel(this.polynomial);
         add(graphicsPanel, BorderLayout.WEST);
-        drawPolynomial();
 
-        addMenu();
+        addMenuBar();
         setVisible(true);
     }
 
-    private void drawPolynomial() {
-        graphicsPanel.update(polynomial);
-    }
-
-    // Centres frame on desktop
-    // modifies: this
-    // effects:  location of frame is set so frame is centred on desktop
-    private void centreOnScreen() {
-        Dimension scrn = Toolkit.getDefaultToolkit().getScreenSize();
-        setLocation((scrn.width - getWidth()) / 2, (scrn.height - getHeight()) / 2);
-    }
-
-    public void run() {
-    }
-
-    private void addMenu() {
-        JMenuBar menuBar = new JMenuBar();
+    // MODIFIES: this
+    // EFFECTS: adds elements to the application's menu bar
+    private void addMenuBar() {
         // set file menu
         JMenu fileMenu = new JMenu("Save/Load");
         fileMenu.setMnemonic('S');
@@ -77,20 +93,19 @@ public class PolynomialGuiApp extends JFrame {
         addMenuItem(fileMenu, new SaveAction(), KeyStroke.getKeyStroke("control S"));
         addMenuItem(fileMenu, new NewPolynomialAction(), KeyStroke.getKeyStroke("control N"));
 
+        // set edit menu
         JMenu editMenu = new JMenu("Edit");
         addMenuItem(editMenu, new NewTermAction(), KeyStroke.getKeyStroke("control A"));
 
+        // add menus to menu bar
+        JMenuBar menuBar = new JMenuBar();
         menuBar.add(fileMenu);
+        menuBar.add(editMenu);
         setJMenuBar(menuBar);
     }
 
-    /**
-     * Adds an item with given handler to the given menu
-     * Code copied from AlarmSystem project
-     * @param theMenu  menu to which new item is added
-     * @param action   handler for new menu item
-     * @param accelerator    keystroke accelerator for this menu item
-     */
+    // EFFECTS: Adds item to menu (which may not be set to app yet)
+    // Code copied from AlarmSystem project
     private void addMenuItem(JMenu theMenu, AbstractAction action, KeyStroke accelerator) {
         JMenuItem menuItem = new JMenuItem(action);
         menuItem.setMnemonic(menuItem.getText().charAt(0));
@@ -98,6 +113,8 @@ public class PolynomialGuiApp extends JFrame {
         theMenu.add(menuItem);
     }
 
+    // MODIFIES: this
+    // EFFECTS: prepares action for when user wants to load polynomial from file
     private class LoadAction extends AbstractAction {
 
         LoadAction() {
@@ -105,11 +122,14 @@ public class PolynomialGuiApp extends JFrame {
         }
 
         @Override
+        // EFFECTS: show list of polynomials from file, then allow user to select
         public void actionPerformed(ActionEvent evt) {
             JOptionPane.showMessageDialog(null, "Create load dialog here!");
         }
     }
 
+    // MODIFIES: this, file storage
+    // EFFECTS: prepares action for when user wants to save polynomial to file
     private class SaveAction extends AbstractAction {
 
         SaveAction() {
@@ -117,11 +137,14 @@ public class PolynomialGuiApp extends JFrame {
         }
 
         @Override
+        // EFFECTS: save polynomial to file, then alert user
         public void actionPerformed(ActionEvent evt) {
             JOptionPane.showMessageDialog(null, "Saved polynomial " + polynomial + "!");
         }
     }
 
+    // MODIFIES: this
+    // EFFECTS: prepares action for when user wants to load polynomial from input
     private class NewPolynomialAction extends AbstractAction {
 
         NewPolynomialAction() {
@@ -129,6 +152,7 @@ public class PolynomialGuiApp extends JFrame {
         }
 
         @Override
+        // EFFECTS: create input dialog, then load polynomial from said input
         public void actionPerformed(ActionEvent evt) {
             String polyStr = JOptionPane.showInputDialog(null,
                     "Polynomial",
@@ -148,6 +172,8 @@ public class PolynomialGuiApp extends JFrame {
         }
     }
 
+    // MODIFIES: this
+    // EFFECTS: prepares action for when user wants to add term from input
     private class NewTermAction extends AbstractAction {
 
         NewTermAction() {
@@ -155,6 +181,7 @@ public class PolynomialGuiApp extends JFrame {
         }
 
         @Override
+        // EFFECTS: create input dialog, then add term to loaded polynomial
         public void actionPerformed(ActionEvent evt) {
             String termStr = JOptionPane.showInputDialog(null,
                     "Term",
