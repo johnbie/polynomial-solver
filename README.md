@@ -36,8 +36,6 @@ Here are some list of restrictions:
  - User can specify rational values (i.e. natural numbers, fractions) as coefficients and are restricted to specifying for positive powers. 
  - When integrating a function, the user must specify the big C. 
  - While the application tries to show as much of the graph as possible, the users are limited to viewing a specific part of the graph and can neither pan nor zoom.
- - The curves are approximated with Bezier curves, and as such might be inaccurate in some cases. The application tries to adjust the precision based on the function's slope and the slope's rate of change.
-
 
 ## User Stories
 
@@ -49,8 +47,13 @@ List of User Stories:
  - As a user, I want to just check the values of the function at specific point `f(a)`.
  - As a marker/tester, I want a list of polynomials loaded in by default that I could test with.
  - As a student, I want to save a list of polynomials first before looking at each one.
+- As a math tutor, I want to be able to quickly generate and plot the polynomials so that I can teach my students math concepts visually.
+    - Drawing a lot of tiny lines used over implementing Bezier curves.
 
-Future Stories:
- - As a math tutor, I want to be able to quickly generate and plot the polynomials so that I can teach my students math concepts visually.
-	- By evaluating the point value of the function and derivative, it's possible to plot the curve with Bezier curve.
- - As a college student, I want to see where all the function increases, decreases, and is concave up or down. (MAYBE)
+
+## Instructions for Grader
+ - Visual component and summary are all included by default as long as the user loads in a polynomial. (NOTE: these are some of the extra actions)
+ - To create or load a polynomial, go under Files menu and Load from list (Ctrl-L) or create new (Ctrl-N). (LOAD FUNCTION)
+ - To save the one currently loaded, click Save to file (Ctrl-S). (SAVE FUNCTION)
+ - You can also add new terms to the existing polynomial in the Edit menu (Ctrl-T). (NOTE: this is your action 1)
+ - You can even view the derivative of current polynomial or reset it. (NOTE: these are also some of the extra actions)
