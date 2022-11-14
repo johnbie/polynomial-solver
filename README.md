@@ -52,8 +52,8 @@ List of User Stories:
 
 
 ## Instructions for Grader
- - Visual component and summary are all included by default as long as the user loads in a polynomial. (NOTE: these are some of the extra actions)
+ - Visual component and summary are all included by default as long as the user loads in a polynomial.
  - To create or load a polynomial, go under Files menu and Load from list (Ctrl-L) or create new (Ctrl-N). (LOAD FUNCTION)
  - To save the one currently loaded, click Save to file (Ctrl-S). (SAVE FUNCTION)
  - You can also add new terms to the existing polynomial in the Edit menu (Ctrl-T). (NOTE: this is your action 1)
- - You can even view the derivative of current polynomial or reset it. (NOTE: these are also some of the extra actions)
+ - You can even view the derivative of current polynomial or reset it. (NOTE: these also some of the extra actions)
