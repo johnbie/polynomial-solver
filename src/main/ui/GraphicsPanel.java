@@ -1,10 +1,12 @@
 package ui;
 
 import model.Polynomial;
+import model.Root;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Path2D;
+import java.util.List;
 
 /*
  * The class for showing the polynomial graph to user.
@@ -39,32 +41,48 @@ public class GraphicsPanel extends JPanel {
         g.setColor(Color.BLACK);
 
         // init variables
-        double unitPixelSize = 20;
+        int unitsToRender = getUnitsToRender();
+        double unitPixelSize = (double)MIDPOINT / unitsToRender;
 
         // draw
-        drawAxes(g, unitPixelSize);
+        drawAxes(g, unitsToRender, unitPixelSize);
         drawGraph(g, unitPixelSize);
     }
 
     // MODIFIES: this
     // EFFECTS: draws the x and y axes, as well as unit indicators
-    protected void drawAxes(Graphics g, double unitPixelSize) {
+    protected void drawAxes(Graphics g, int unitsToRender, double unitPixelSize) {
         // draw x/y axes
         g.drawLine(MIDPOINT,0, MIDPOINT, HEIGHT);
         g.drawLine(0, MIDPOINT, WIDTH, MIDPOINT);
 
         // draw unit indicators
-        int unitsToRender = MIDPOINT / (int)unitPixelSize;
-        int unitIndicatorLength = (int)(unitPixelSize / 10);
+        int unitIndicatorLength = 1;
+        int magnitude = 1;
+
+        while (unitsToRender > 30) {
+            unitsToRender /= 10;
+            unitsToRender += 1;
+            unitPixelSize *= 10;
+            unitIndicatorLength *= 2;
+            magnitude *= 10;
+        }
+
         for (int i = 1; i < unitsToRender; i++) {
+            String displayString = (i * magnitude) + "";
+
             int unitPixelPos = MIDPOINT + (int)(unitPixelSize * i);
             g.drawLine(unitPixelPos, MIDPOINT - unitIndicatorLength, unitPixelPos, MIDPOINT + unitIndicatorLength);
             g.drawLine(MIDPOINT - unitIndicatorLength, unitPixelPos, MIDPOINT + unitIndicatorLength, unitPixelPos);
+            g.drawString(displayString, unitPixelPos - (displayString.length() * 3), MIDPOINT + 17);
+            g.drawString("-" + displayString, MIDPOINT - ((1 + displayString.length()) * 7), unitPixelPos + 4);
 
             // for negatives
             unitPixelPos = MIDPOINT - (int)(unitPixelSize * i);
             g.drawLine(unitPixelPos, MIDPOINT - unitIndicatorLength, unitPixelPos, MIDPOINT + unitIndicatorLength);
             g.drawLine(MIDPOINT - unitIndicatorLength, unitPixelPos, MIDPOINT + unitIndicatorLength, unitPixelPos);
+            g.drawString("-" + displayString, unitPixelPos - ((1 + displayString.length()) * 3), MIDPOINT + 17);
+            g.drawString(displayString, MIDPOINT - (1 + displayString.length() * 7) - 2, unitPixelPos + 4);
         }
     }
 
@@ -98,6 +116,30 @@ public class GraphicsPanel extends JPanel {
         // draw positive and negative sides
         g2.draw(positivePath);
         g2.draw(negativePath);
+    }
+
+    // EFFECTS: returns the new max value to resize graph to
+    private int getUnitsToRender() {
+        // start with y intercept
+        double maxValue = Math.max(10, Math.abs(polynomial.evaluateAtPoint(0)));
+
+        maxValue = getNewMaxVal(maxValue, polynomial.getXIntercepts());
+        maxValue = getNewMaxVal(maxValue, polynomial.getCriticalPoints());
+        maxValue = getNewMaxVal(maxValue, polynomial.getInflectionPoints());
+
+        return (int)(maxValue * 1.25) + 1;
+    }
+
+    // EFFECTS: returns the largest value from previous max value, roots, and value of roots
+    private double getNewMaxVal(double max, List<Root> rootList) {
+        for (Root root : rootList) {
+            double rootVal = Math.abs(root.getValue());
+            max = Math.max(max, rootVal);
+
+            double solution = Math.abs(polynomial.evaluateAtPoint(rootVal));
+            max = Math.max(max, solution);
+        }
+        return max;
     }
 
     // EFFECTS: returns the x UI position for the x axis position

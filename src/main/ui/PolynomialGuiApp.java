@@ -85,15 +85,18 @@ public class PolynomialGuiApp extends JFrame {
     // EFFECTS: adds elements to the application's menu bar
     private void addMenuBar() {
         // set file menu
-        JMenu fileMenu = new JMenu("Save/Load");
-        fileMenu.setMnemonic('S');
+        JMenu fileMenu = new JMenu("Files");
+        fileMenu.setMnemonic('F');
         addMenuItem(fileMenu, new LoadAction(), KeyStroke.getKeyStroke("control L"));
         addMenuItem(fileMenu, new SaveAction(), KeyStroke.getKeyStroke("control S"));
-        addMenuItem(fileMenu, new NewPolynomialAction(), KeyStroke.getKeyStroke("control N"));
 
         // set edit menu
         JMenu editMenu = new JMenu("Edit");
-        addMenuItem(editMenu, new NewTermAction(), KeyStroke.getKeyStroke("control A"));
+        editMenu.setMnemonic('E');
+        addMenuItem(editMenu, new NewPolynomialAction(), KeyStroke.getKeyStroke("control N"));
+        addMenuItem(editMenu, new NewTermAction(), KeyStroke.getKeyStroke("control T"));
+        addMenuItem(editMenu, new ResetPolynomialAction(), KeyStroke.getKeyStroke("control R"));
+        addMenuItem(editMenu, new DerivePolynomialAction(), KeyStroke.getKeyStroke("control D"));
 
         // add menus to menu bar
         JMenuBar menuBar = new JMenuBar();
@@ -263,6 +266,41 @@ public class PolynomialGuiApp extends JFrame {
         }
     }
 
+    // MODIFIES: this
+    // EFFECTS: prepares action for when user wants to reset polynomial (non-reversible)
+    private class ResetPolynomialAction extends AbstractAction {
+
+        // EFFECTS: constructor; initializes action
+        ResetPolynomialAction() {
+            super("Reset polynomial");
+        }
+
+        @Override
+        // EFFECTS: create input dialog, then add term to loaded polynomial
+        public void actionPerformed(ActionEvent evt) {
+            polynomial = new Polynomial();
+            summaryPanel.update(polynomial);
+            graphicsPanel.update(polynomial);
+        }
+    }
+
+    // MODIFIES: this
+    // EFFECTS: prepares action for when user wants to get derivative of polynomial (non-reversible)
+    private class DerivePolynomialAction extends AbstractAction {
+
+        // EFFECTS: constructor; initializes action
+        DerivePolynomialAction() {
+            super("Get derivative");
+        }
+
+        @Override
+        // EFFECTS: create input dialog, then add term to loaded polynomial
+        public void actionPerformed(ActionEvent evt) {
+            polynomial = polynomial.getDerivative();
+            summaryPanel.update(polynomial);
+            graphicsPanel.update(polynomial);
+        }
+    }
 
     // EFFECTS: generates sample polynomials as json array
     private JSONArray generateSampleData() {
