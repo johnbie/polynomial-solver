@@ -30,7 +30,6 @@ public class PolynomialGuiApp extends JFrame {
     public PolynomialGuiApp() {
         super("Polynomial Root Calculator");
         init();
-        run();
     }
 
     // MODIFIES: this
@@ -39,13 +38,6 @@ public class PolynomialGuiApp extends JFrame {
         initPolynomial();
         initFrame();
         initUI();
-    }
-
-
-    // MODIFIES: this
-    // EFFECTS: runs the polynomial gui app
-    private void run() {
-        ;
     }
 
     // MODIFIES: this, file storage
@@ -125,6 +117,7 @@ public class PolynomialGuiApp extends JFrame {
         private JList<String> polynomialList;
         private String selectedPolynomial = "";
 
+        // EFFECTS: constructor; initializes action
         LoadAction() {
             super("Load from file");
         }
@@ -188,6 +181,7 @@ public class PolynomialGuiApp extends JFrame {
     // EFFECTS: prepares action for when user wants to save polynomial to file
     private class SaveAction extends AbstractAction {
 
+        // EFFECTS: constructor; initializes action
         SaveAction() {
             super("Save to file");
         }
@@ -212,6 +206,7 @@ public class PolynomialGuiApp extends JFrame {
     // EFFECTS: prepares action for when user wants to load polynomial from input
     private class NewPolynomialAction extends AbstractAction {
 
+        // EFFECTS: constructor; initializes action
         NewPolynomialAction() {
             super("New polynomial");
         }
@@ -241,6 +236,7 @@ public class PolynomialGuiApp extends JFrame {
     // EFFECTS: prepares action for when user wants to add term from input
     private class NewTermAction extends AbstractAction {
 
+        // EFFECTS: constructor; initializes action
         NewTermAction() {
             super("Add new term");
         }
