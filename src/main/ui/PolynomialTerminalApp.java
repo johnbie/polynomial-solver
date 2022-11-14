@@ -311,7 +311,7 @@ public class PolynomialTerminalApp {
     // EFFECTS: lists out polynomials in file
     private void listPolynomials(JSONArray polynomials) {
         System.out.println("\nPolynomials List:");
-        polynomials.length();
+
         for (int i = 0; i < polynomials.length(); i++) {
             System.out.println("\t" + i + " : " + polynomials.getString(i));
         }

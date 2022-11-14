@@ -19,11 +19,14 @@ public class SummaryPanel extends JPanel {
         add(summary);
     }
 
+    // MODIFIES: this
+    // EFFECTS: updates the polynomial summary
     public void update(Polynomial polynomial) {
         summary.setText(getSummary(polynomial));
         repaint();
     }
 
+    // EFFECTS: generates the polynomial summary
     private String getSummary(Polynomial polynomial) {
         String summary = "\nSummary for " + polynomial + ": " + "\n";
         summary += " - x-intercepts: " + polynomial.getXIntercepts() + "\n";

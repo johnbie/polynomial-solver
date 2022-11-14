@@ -2,11 +2,17 @@ package ui;
 
 import model.Polynomial;
 import model.Term;
+import org.json.JSONArray;
+import persistence.JsonUtil;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /*
  * The class for starting the polynomial gui app.
@@ -47,9 +53,9 @@ public class PolynomialGuiApp extends JFrame {
     private void initPolynomial() {
         polynomial = new Polynomial("0");
         File polynomialsFile = new File(polynomialFilePath);
-        //if (!polynomialsFile.exists()) {
-        //    generateSampleDataToFile();
-        //}
+        if (!polynomialsFile.exists()) {
+            generateSampleDataToFile();
+        }
     }
 
     // MODIFIES: this
@@ -116,17 +122,67 @@ public class PolynomialGuiApp extends JFrame {
     // MODIFIES: this
     // EFFECTS: prepares action for when user wants to load polynomial from file
     private class LoadAction extends AbstractAction {
+        private JList<String> polynomialList;
+        private String selectedPolynomial = "";
 
         LoadAction() {
             super("Load from file");
         }
 
         @Override
-        // EFFECTS: show list of polynomials from file, then allow user to select
+        // MODIFIES: parent (PolynomialGuiApp)
+        // EFFECTS: show list of polynomials from file, then allow user to select from it
         public void actionPerformed(ActionEvent evt) {
-            JOptionPane.showMessageDialog(null, "Create load dialog here!");
+            // load polynomial as json
+            try {
+                // create list element
+                polynomialList = new JList<>(getPolynomialFromFile());
+                polynomialList.addListSelectionListener(new PolynomialListSelectionHandler());
+
+                // create dialog for selecting list
+                JPanel inputPanel = new JPanel();
+                inputPanel.add(polynomialList);
+                int result = JOptionPane.showConfirmDialog(null, inputPanel,
+                        "Please select a polynomial from list below:", JOptionPane.OK_CANCEL_OPTION);
+
+                // check for results
+                if (result == JOptionPane.OK_OPTION) {
+                    polynomial = new Polynomial(selectedPolynomial);
+                    summaryPanel.update(polynomial);
+                    graphicsPanel.update(polynomial);
+                }
+            } catch (FileNotFoundException exception) {
+                JOptionPane.showMessageDialog(null, "Failed to save file!");
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(null, "Failed to get polynomials!");
+            }
+        }
+
+        // EFFECTS: gets polynomials from file and returns as an array of strings
+        private String[] getPolynomialFromFile() throws IOException {
+            // get from file
+            JSONArray polynomials = JsonUtil.getArray(polynomialFilePath);
+
+            // create string array
+            String[] polynomialStrings = new String[polynomials.length()];
+            for (int i = 0; i < polynomials.length(); i++) {
+                polynomialStrings[i] = polynomials.getString(i);
+            }
+
+            return polynomialStrings;
+        }
+
+        // MODIFIES: this (LoadAction)
+        // EFFECTS: prepares action for when user wants to load polynomial from file
+        private class PolynomialListSelectionHandler implements ListSelectionListener {
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting() && polynomialList.getSelectedIndex() >= 0) {
+                    selectedPolynomial = polynomialList.getSelectedValue();
+                }
+            }
         }
     }
+
 
     // MODIFIES: this, file storage
     // EFFECTS: prepares action for when user wants to save polynomial to file
@@ -139,7 +195,16 @@ public class PolynomialGuiApp extends JFrame {
         @Override
         // EFFECTS: save polynomial to file, then alert user
         public void actionPerformed(ActionEvent evt) {
-            JOptionPane.showMessageDialog(null, "Saved polynomial " + polynomial + "!");
+            try {
+                JSONArray polynomials = JsonUtil.getArray(polynomialFilePath);
+                polynomials.put(polynomial.toString());
+                JsonUtil.writeFile(polynomialFilePath, polynomials);
+                JOptionPane.showMessageDialog(null, "Saved polynomial " + polynomial + "!");
+            } catch (FileNotFoundException exception) {
+                JOptionPane.showMessageDialog(null, "Failed to save file!");
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(null, "Failed to get polynomials!");
+            }
         }
     }
 
@@ -199,6 +264,28 @@ public class PolynomialGuiApp extends JFrame {
                 JOptionPane.showMessageDialog(null, e.getMessage(), "System Error",
                         JOptionPane.ERROR_MESSAGE);
             }
+        }
+    }
+
+
+    // EFFECTS: generates sample polynomials as json array
+    private JSONArray generateSampleData() {
+        JSONArray samplePolynomials = new JSONArray();
+        samplePolynomials.put("x^2");
+        samplePolynomials.put("x^3 + 6x^2 + 11x + 6");
+        samplePolynomials.put("x^3 + -11/4x^2 + -27/2x + 45/4");
+        samplePolynomials.put("-x^2 + 2x + 1");
+        return samplePolynomials;
+    }
+
+    // MODIFIES: polynomials.json
+    // EFFECTS: generates sample polynomials and writes them to file
+    private void generateSampleDataToFile() {
+        JSONArray samplePolynomials = generateSampleData();
+        try {
+            JsonUtil.writeFile(polynomialFilePath, samplePolynomials);
+        } catch (FileNotFoundException exception) {
+            System.out.println("Failed to generate sample file!");
         }
     }
 }
