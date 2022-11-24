@@ -61,8 +61,7 @@ public class GraphicsPanel extends JPanel {
         int magnitude = 1;
 
         while (unitsToRender > 30) {
-            unitsToRender /= 10;
-            unitsToRender += 1;
+            unitsToRender = (unitsToRender / 10) + 1;
             unitPixelSize *= 10;
             unitIndicatorLength *= 2;
             magnitude *= 10;
