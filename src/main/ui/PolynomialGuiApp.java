@@ -54,7 +54,7 @@ public class PolynomialGuiApp extends JFrame {
     // EFFECTS: initializes the application's frame
     private void initFrame() {
         // main settings
-        setTitle("CPSC 210: Alarm System Simulator");
+        setTitle("Polynomial Gui App");
         setSize(WIDTH, HEIGHT);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
