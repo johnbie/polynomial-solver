@@ -57,3 +57,21 @@ List of User Stories:
  - To save the one currently loaded, click Save to file (Ctrl-S). (SAVE FUNCTION)
  - You can also add new terms to the existing polynomial in the Edit menu (Ctrl-T). (NOTE: this is your action 1)
  - You can even view the derivative of current polynomial or reset it. (NOTE: these also some of the extra actions)
+
+## Phase 4: Task 2
+```
+Mon Nov 28 14:48:38 PST 2022
+Created a new polynomial 0
+
+Mon Nov 28 14:48:43 PST 2022
+Created a new polynomial x^3 + x
+
+Mon Nov 28 14:48:47 PST 2022
+Added 2x^2 to polynomial (now x^3 + 2x^2 + x)
+
+Mon Nov 28 14:48:52 PST 2022
+Derived polynomial (now 3x^2 + 4x + 1)
+
+Mon Nov 28 14:48:53 PST 2022
+Reset polynomial to zero polynomial
+```

@@ -20,7 +20,7 @@ public class Main {
             public void windowClosing(WindowEvent e) {
                 EventLog eventLog = EventLog.getInstance();
                 for (Event next : eventLog) {
-                    System.out.println(next.toString());
+                    System.out.println(next.toString() + "\n");
                 }
             }
         });
