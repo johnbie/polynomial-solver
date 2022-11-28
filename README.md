@@ -75,3 +75,10 @@ Derived polynomial (now 3x^2 + 4x + 1)
 Mon Nov 28 14:48:53 PST 2022
 Reset polynomial to zero polynomial
 ```
+
+## Phase 4: Task 3
+If I were to do any additional refactoring, I would start off by separating the math utilities class into a new `MathUtils` namespace. This would more explicitly separate out the concern so that the class files in `model` only need to worry about use cases directly related to the polynomial.
+
+I would also reduce coupling by preventing the Roots class from calling functions in Polynomial class by creating a separate Factory class that creates the list of Roots. This new `PolynomialsFactory` class will also contain some functions from the `Polynomial` class.
+
+Lastly, I would while also move out the many private classes in the `PolynomialGuiApp` into separate class files.

@@ -7,7 +7,7 @@ import java.util.Objects;
 /*
  * Represents the polynomial object and ways to operate on it
  */
-public class Polynomial {
+public class Polynomial implements IDerivable {
     private final List<Term> orderedTerms;
 
     // Constructs a polynomial
@@ -84,6 +84,7 @@ public class Polynomial {
 
     // Evaluates the polynomial at point x
     // EFFECTS: Returns the function result
+    @Override
     public double evaluateAtPoint(double point) {
         return evaluateAtPoint(point, this.orderedTerms);
     }
@@ -116,6 +117,7 @@ public class Polynomial {
     // Sets the polynomial to the zero polynomial
     // MODIFIES: this
     // EFFECTS: Sets the polynomial to the zero polynomial
+    @Override
     public void reset() {
         orderedTerms.clear();
 
@@ -126,6 +128,7 @@ public class Polynomial {
     // Sets the polynomial to its derivative
     // MODIFIES: this
     // EFFECTS: Sets the polynomial to its derivative
+    @Override
     public void derive() {
         List<Term> orderedDerivativeTerms = getDerivativeForTerms(this);
         orderedTerms.clear();
@@ -137,6 +140,7 @@ public class Polynomial {
 
     // Gets the derivative of the polynomial w/ logging
     // EFFECTS: gets the derivative
+    @Override
     public Polynomial getDerivative() {
         List<Term> orderedDerivativeTerms = getDerivativeForTerms(this);
         Polynomial derivative = new Polynomial();

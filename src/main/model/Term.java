@@ -3,7 +3,7 @@ package model;
 /*
  * Represents the term of a polynomial object
  */
-public class Term {
+public class Term implements IDerivable {
     private int numerator;
     private int denominator;
     private int degree;
@@ -102,6 +102,7 @@ public class Term {
 
     // Evaluates the polynomial at point x
     // EFFECTS: Returns the function result
+    @Override
     public double evaluateAtPoint(double point) {
         return Math.pow(point, this.degree) * this.numerator / this.denominator;
     }
@@ -126,14 +127,37 @@ public class Term {
         }
     }
 
+    // Sets the term to zero
+    // MODIFIES: this
+    // EFFECTS: Sets the term to zero
+    @Override
+    public void reset() {
+        this.numerator = 0;
+        this.denominator = 1;
+        this.degree = 0;
+    }
+
+    // Sets the polynomial to its derivative
+    // MODIFIES: this
+    // EFFECTS: Sets the polynomial to its derivative
+    @Override
+    public void derive() {
+        if (this.degree > 0) {
+            this.numerator *= this.degree;
+            this.degree--;
+            simplify();
+        } else {
+            reset();
+        }
+    }
+
     // Gets the derivative of the term
     // EFFECTS: returns a derivative of the term
+    @Override
     public Term getDerivative() {
-        if (this.degree > 0) {
-            return new Term(this.numerator * this.degree, this.denominator, this.degree - 1);
-        } else {
-            return new Term(); // 0
-        }
+        Term copy = createCopy();
+        copy.derive();
+        return copy;
     }
 
     // Gets the absolute value of the term (i.e. not negative)
