@@ -1,3 +1,5 @@
+// Code obtained from AlarmSystem project
+
 package model;
 
 import java.util.ArrayList;
@@ -22,7 +24,7 @@ public class EventLog implements Iterable<Event> {
      * (Singleton Design Pattern).
      */
     private EventLog() {
-        events = new ArrayList<Event>();
+        events = new ArrayList<>();
     }
 
     /**

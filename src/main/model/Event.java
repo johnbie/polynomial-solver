@@ -1,3 +1,5 @@
+// Code obtained from AlarmSystem project
+
 package model;
 
 import java.util.Calendar;
