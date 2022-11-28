@@ -14,6 +14,7 @@ public class Polynomial {
     // EFFECTS: Constructs a polynomial with an empty linked list named `orderedTerms`
     public Polynomial() {
         orderedTerms = new LinkedList<>();
+        EventLog.getInstance().logEvent(new Event("Created a new zero polynomial"));
     }
 
     // Constructs a term from string input
@@ -37,9 +38,11 @@ public class Polynomial {
             } else {
                 Term term = new Term(polynomialStr);
                 addTerm(term);
-                return;
+                break;
             }
         }
+
+        EventLog.getInstance().logEvent(new Event("Created a new polynomial " + this));
     }
 
     // Adds a term
@@ -48,10 +51,19 @@ public class Polynomial {
     // EFFECTS: adds a new term to polynomial
     public void addTerm(Term term) {
         if (term.isZero()) {
+            EventLog.getInstance().logEvent(new Event("Added zero to polynomial (now " + this + ")"));
             return;
         }
 
-        // insert term at the correct position (i.e. constants are first, then
+        addTermToList(term);
+        EventLog.getInstance().logEvent(new Event("Added " + term + " to polynomial (now " + this + ")"));
+    }
+
+    // Adds a term to ordered terms list
+    // MODIFIES: this
+    // EFFECTS: Adds a term to ordered terms list
+    private void addTermToList(Term term) {
+        // insert term at the correct position
         for (int i = 0; i < orderedTerms.size(); i++) {
             int degree = orderedTerms.get(i).getDegree();
             if (term.getDegree() < degree) {
