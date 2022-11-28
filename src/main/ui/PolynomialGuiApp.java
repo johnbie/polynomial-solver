@@ -278,7 +278,7 @@ public class PolynomialGuiApp extends JFrame {
         @Override
         // EFFECTS: create input dialog, then add term to loaded polynomial
         public void actionPerformed(ActionEvent evt) {
-            polynomial = new Polynomial();
+            polynomial.reset();
             summaryPanel.update(polynomial);
             graphicsPanel.update(polynomial);
         }
@@ -296,7 +296,7 @@ public class PolynomialGuiApp extends JFrame {
         @Override
         // EFFECTS: create input dialog, then add term to loaded polynomial
         public void actionPerformed(ActionEvent evt) {
-            polynomial = polynomial.getDerivative();
+            polynomial.derive();
             summaryPanel.update(polynomial);
             graphicsPanel.update(polynomial);
         }

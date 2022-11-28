@@ -69,6 +69,24 @@ class PolynomialTest {
     }
 
     @Test
+    public void testReset() {
+        Polynomial polynomial = new Polynomial();
+        polynomial.addTerm(new Term(1, 1, 1));
+        polynomial.addTerm(new Term(1, 1, 10));
+        polynomial.reset();
+        assertEquals("0", polynomial.toString());
+    }
+
+    @Test
+    public void testDerive() {
+        Polynomial polynomial = new Polynomial();
+        polynomial.addTerm(new Term(1, 1, 1));
+        polynomial.addTerm(new Term(1, 1, 10));
+        polynomial.derive();
+        assertEquals("10x^9 + 1", polynomial.toString());
+    }
+
+    @Test
     public void testGetDerivative() {
         Polynomial polynomial = new Polynomial();
         polynomial.addTerm(new Term(1, 1, 1));

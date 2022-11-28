@@ -14,7 +14,6 @@ public class Polynomial {
     // EFFECTS: Constructs a polynomial with an empty linked list named `orderedTerms`
     public Polynomial() {
         orderedTerms = new LinkedList<>();
-        EventLog.getInstance().logEvent(new Event("Created a new zero polynomial"));
     }
 
     // Constructs a term from string input
@@ -26,7 +25,7 @@ public class Polynomial {
             if (polynomialStr.contains(" + ") || polynomialStr.contains(" - ")) {
                 String nextTermString = polynomialStr.split(" [+-] ")[0];
                 Term term = new Term(nextTermString);
-                addTerm(term);
+                addTermToList(term);
                 polynomialStr = polynomialStr.replace(nextTermString, "");
 
                 String operator = polynomialStr.substring(0,3);
@@ -37,7 +36,7 @@ public class Polynomial {
                 }
             } else {
                 Term term = new Term(polynomialStr);
-                addTerm(term);
+                addTermToList(term);
                 break;
             }
         }
@@ -51,7 +50,6 @@ public class Polynomial {
     // EFFECTS: adds a new term to polynomial
     public void addTerm(Term term) {
         if (term.isZero()) {
-            EventLog.getInstance().logEvent(new Event("Added zero to polynomial (now " + this + ")"));
             return;
         }
 
@@ -115,20 +113,50 @@ public class Polynomial {
         return terms;
     }
 
-    // Gets the derivative of the polynomial
+    // Sets the polynomial to the zero polynomial
+    // MODIFIES: this
+    // EFFECTS: Sets the polynomial to the zero polynomial
+    public void reset() {
+        orderedTerms.clear();
+
+        Event log = new Event("Reset polynomial to zero polynomial");
+        EventLog.getInstance().logEvent(log);
+    }
+
+    // Sets the polynomial to its derivative
+    // MODIFIES: this
+    // EFFECTS: Sets the polynomial to its derivative
+    public void derive() {
+        List<Term> orderedDerivativeTerms = getDerivativeForTerms(this);
+        orderedTerms.clear();
+        orderedTerms.addAll(orderedDerivativeTerms);
+
+        Event log = new Event("Derived polynomial (now " + this + ")");
+        EventLog.getInstance().logEvent(log);
+    }
+
+    // Gets the derivative of the polynomial w/ logging
     // EFFECTS: gets the derivative
     public Polynomial getDerivative() {
-        Polynomial polynomial = new Polynomial();
+        List<Term> orderedDerivativeTerms = getDerivativeForTerms(this);
+        Polynomial derivative = new Polynomial();
+        derivative.orderedTerms.addAll(orderedDerivativeTerms);
+
+        return derivative;
+    }
+
+    protected static List<Term> getDerivativeForTerms(Polynomial polynomial) {
+        List<Term> orderedTerms = new LinkedList<>();
 
         // add the derivative of each term as long as they're not zero
-        for (Term term : orderedTerms) {
+        for (Term term : polynomial.orderedTerms) {
             Term termDerivative = term.getDerivative();
             if (!termDerivative.isZero()) {
-                polynomial.orderedTerms.add(termDerivative);
+                orderedTerms.add(termDerivative);
             }
         }
 
-        return polynomial;
+        return orderedTerms;
     }
 
     // Gets the y intercept of the function as a rational
