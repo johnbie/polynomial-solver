@@ -35,9 +35,14 @@ public class EventTest {
 
 	@Test
 	public void testEquals() {
-        assertNotEquals(null, e);
-        assertNotEquals("", e);
-        assertEquals(e, e);
+        assertFalse(e.equals(null));
+        assertFalse(e.equals("fail"));
+        assertTrue(e.equals(e));
+	}
+
+	@Test
+	public void testHash() {
+        assertEquals((13 * e.getDate().hashCode() + e.getDescription().hashCode()), e.hashCode());
 	}
 
 	@Test
