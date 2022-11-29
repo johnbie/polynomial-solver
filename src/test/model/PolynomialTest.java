@@ -24,6 +24,13 @@ class PolynomialTest {
     }
 
     @Test
+    public void testAddTermForZero() {
+        Polynomial polynomial = new Polynomial();
+        polynomial.addTerm(new Term());
+        assertEquals("0", polynomial.toString());
+    }
+
+    @Test
     public void testAddTermToExistingAtGreaterDegree() {
         Polynomial polynomial = new Polynomial();
         polynomial.addTerm(new Term(2,1,2));
