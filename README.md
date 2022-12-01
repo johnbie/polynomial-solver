@@ -82,3 +82,12 @@ If I were to do any additional refactoring, I would start off by separating the 
 I would also reduce coupling by preventing the Roots class from calling functions in Polynomial class by creating a separate Factory class that creates the list of Roots. This new `PolynomialsFactory` class will also contain some functions from the `Polynomial` class.
 
 Lastly, I would while also move out the many private classes in the `PolynomialGuiApp` into separate class files.
+
+
+## Additional Notes
+While the project accurately fills a use case, it's still a prototype. Here are some ways I hope to be able to improve the project:
+ - Improve the string input parser such that it's able to more robustly handle user inputs.
+   - Automatically accept decimals with finite decimal places and convert to fraction. 
+ - Accept logs and exponential functions (new function type).
+ - Accept sins and cosines.
+ - Add integration support.
