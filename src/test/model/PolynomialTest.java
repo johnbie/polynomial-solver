@@ -1,9 +1,16 @@
 package model;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PolynomialTest {
+    @BeforeEach
+    void runBefore() {
+        EventLog.getInstance().clear();
+    }
+
     @Test
     public void testPolynomialFromString() {
         Polynomial zero1 = new Polynomial("0");
@@ -184,5 +191,65 @@ class PolynomialTest {
     public void testGetInflectionPoints() {
         Polynomial polynomial = new Polynomial("x^3 + x + 2");
         assertEquals("[0]", polynomial.getInflectionPoints().toString());
+    }
+
+    @Test
+    public void testPolynomialLoggingOnConstructor() {
+        Polynomial polynomial = new Polynomial("x^2 + 1");
+
+        String expectedLog = "Created a new polynomial " + polynomial;
+        StringBuilder actualLog = new StringBuilder();
+
+        EventLog eventLog = EventLog.getInstance();
+        for (Event next : eventLog) {
+            actualLog.append(next.toString());
+        }
+        assertTrue(actualLog.toString().contains(expectedLog));
+    }
+
+    @Test
+    public void testPolynomialLoggingOnTermAdd() {
+        Polynomial polynomial = new Polynomial("x^2 + 1");
+        Term term = new Term("2x");
+        polynomial.addTerm(term);
+
+        String expectedLog = "Added " + term + " to polynomial (now " + polynomial + ")";
+        StringBuilder actualLog = new StringBuilder();
+
+        EventLog eventLog = EventLog.getInstance();
+        for (Event next : eventLog) {
+            actualLog.append(next.toString());
+        }
+        assertTrue(actualLog.toString().contains(expectedLog));
+    }
+
+    @Test
+    public void testPolynomialLoggingOnReset() {
+        Polynomial polynomial = new Polynomial("x^2 + 1");
+        polynomial.reset();
+
+        String expectedLog = "Reset polynomial to zero polynomial";
+        StringBuilder actualLog = new StringBuilder();
+
+        EventLog eventLog = EventLog.getInstance();
+        for (Event next : eventLog) {
+            actualLog.append(next.toString());
+        }
+        assertTrue(actualLog.toString().contains(expectedLog));
+    }
+
+    @Test
+    public void testPolynomialLoggingOnDerive() {
+        Polynomial polynomial = new Polynomial("x^2 + 1");
+        polynomial.derive();
+
+        String expectedLog = "Derived polynomial (now " + polynomial + ")";
+        StringBuilder actualLog = new StringBuilder();
+
+        EventLog eventLog = EventLog.getInstance();
+        for (Event next : eventLog) {
+            actualLog.append(next.toString());
+        }
+        assertTrue(actualLog.toString().contains(expectedLog));
     }
 }
